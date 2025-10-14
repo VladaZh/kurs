@@ -54,6 +54,11 @@ header {
     background: rgba(212, 175, 55, 0.05);
 }
 
+.menu-item a {
+    text-decoration: none;
+    color: #164d2e;
+}
+
 .logo {
     height: 100%;
     width: auto;
@@ -76,6 +81,11 @@ header {
     border-radius: 12px;
     border: 1px solid #e8e8e8;
 } */
+
+.profile-link {
+    justify-self: center;
+    align-self: center;
+}
 
 .profile-icon {
     width: 50px;
@@ -206,6 +216,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-top: 3px solid #d4af37;
+    box-shadow: 20 2px 0px rgba(0, 0, 0, 0.08);
 }
 
 .footer-copyright {
