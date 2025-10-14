@@ -7,7 +7,6 @@
 body {
     width: 100vw;
     overflow-x: hidden;
-    /* background-color: #fefefe; */
     background-color: #f8f4e9;
     font-family: 'Georgia', 'Times New Roman', serif;
     color: #2c2c2c;
@@ -200,4 +199,17 @@ header {
 .welcome-message h3 {
     color: #164d2e;
     margin-bottom: 15px;
+}
+
+.footer {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-copyright {
+    font-size: 16px;
+    color: #164d2e;
+    margin: 0;
 }
