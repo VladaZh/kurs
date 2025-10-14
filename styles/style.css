@@ -92,3 +92,112 @@ header {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
 }
+
+.genre-selector {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+    padding: 40px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background: transparent;
+}
+
+.section-title {
+    font-size: 28px;
+    color: #164d2e;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.genres-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.genre-btn {
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #e8e8e8;
+    border-radius: 25px;
+    color: #2c2c2c;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Georgia', serif;
+}
+
+.genre-btn:hover {
+    border-color: #d4af37;
+    color: #d4af37;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.genre-btn.active {
+    background: #164d2e;
+    color: white;
+    border-color: #164d2e;
+}
+
+.content-section {
+    padding: 60px 0;
+    /* background: #fefefe; */
+    background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.book-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.book-title {
+    font-size: 18px;
+    color: #164d2e;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.book-author {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.book-description {
+    color: #888;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.welcome-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.welcome-message h3 {
+    color: #164d2e;
+    margin-bottom: 15px;
+}
