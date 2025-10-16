@@ -1,3 +1,11 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.
+def library(request):
+    return render(request, 'app/library.html')
+
+def archive(request):
+    return render(request, 'app/archive.html')
+
+def profile(request):
+    return render(request, 'app/profile.html')

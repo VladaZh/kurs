@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Архив</title>
     
-    <link rel="stylesheet" href="./styles/style.css" />
-    <link rel="icon" type="image/png" href="./images/Group_2_2.png">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/Group_2_2.png' %}">
   </head>
   <body>
     <header>
       <nav>
         <ul class="menu-items">
-          <li class="menu-item"><a href="index.html">Библиотека</a></li>
-          <li class="menu-item"><a  href="archive.html">Архив</a></li>
+          <li class="menu-item"><a href="{% url 'library' %}">Библиотека</a></li>
+          <li class="menu-item"><a href="{% url 'archive' %}">Архив</a></li>
         </ul>
       </nav>
-      <img src="./images/Group_2_2.png" alt="Логотип" class="logo">
-      <a href="profile.html" class="profile-link">
+      <img src="{% static 'images/Group_2_2.png' %}" alt="Логотип" class="logo">
+      <a href="{% url 'profile' %}" class="profile-link">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNjRkMmUiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSI5IiBmaWxsPSIjZjVmY2M2Ii8+PHBhdGggZD0iTTQ4IDUyYzAtOC44MzctNy4xNjMtMTYtMTYtMTZzLTE2IDcuMTYzLTE2IDE2aDMyeiIgZmlsbD0iI2Y1ZmNjNiIvPjwvc3ZnPg==" 
       alt="Профиль" class="profile-icon">
       </a>
@@ -25,7 +26,7 @@
 
     <section class="genre-selector">
         <div class="container">
-            <h2 class="section-title">Выберите жанр</h2>
+            <h2 class="section-title">Выберите категорию</h2>
             <div class="genres-grid">
                 <button class="genre-btn active" data-genre="all">Все статьи</button>
                 <button class="genre-btn" data-genre="fiction">Технические</button>
@@ -39,7 +40,10 @@
     <main class="content-section">
         <div class="container">
             <div class="books-grid" id="books-container">
-               
+                <div class="welcome-message">
+                    <h3>Архив научных статей</h3>
+                    <p>Выберите категорию чтобы увидеть архивные материалы</p>
+                </div>
             </div>
         </div>
     </main>
