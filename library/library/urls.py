@@ -22,4 +22,5 @@ urlpatterns = [
     path('', views.library, name='library'),
     path('archive/', views.archive, name='archive'),
     path('profile/', views.profile, name='profile'),
+    path('admin/', admin.site.urls)
 ]
