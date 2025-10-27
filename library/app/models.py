@@ -6,7 +6,20 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
     description = models.CharField(max_length=2000)
-    genre = models.CharField(max_length=20)
+    genre = models.CharField(
+        max_length=100, 
+        verbose_name="Жанр",
+        choices=[
+            ('fiction', 'Художественные'),
+            ('science', 'Научные'),
+            ('history', 'Исторические'),
+            ('education', 'Образовательные'),
+        ]
+    )
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        verbose_name = "Книга"
+        verbose_name_plural = "Книги"

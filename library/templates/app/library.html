@@ -29,27 +29,109 @@
             <h2 class="section-title">Выберите жанр</h2>
             <div class="genres-grid">
                 <button class="genre-btn active" data-genre="all">Все жанры</button>
-                <button class="genre-btn" data-genre="fiction">Художественные</button>
-                <button class="genre-btn" data-genre="science">Научные</button>
-                <button class="genre-btn" data-genre="history">Исторические</button>
-                <button class="genre-btn" data-genre="education">Образовательные</button>
+                <button class="genre-btn" data-genre="Художественные">Художественные</button>
+                <button class="genre-btn" data-genre="Научные">Научные</button>
+                <button class="genre-btn" data-genre="Исторические">Исторические</button>
+                <button class="genre-btn" data-genre="Образовательные">Образовательные</button>
             </div>
         </div>
     </section>
 
-    <main class="content-section">
-        <div class="container">
-            <div class="books-grid" id="books-container">
-                <div class="welcome-message">
-                    <h3>Добро пожаловать в нашу библиотеку</h3>
-                    <p>Выберите жанр чтобы увидеть доступные материалы</p>
-                </div>
-            </div>
-        </div>
+  <main class="content-section">
+      <div class="container">
+          <div class="books-grid" id="books-container">
+              <div class="welcome-message">
+                  <h3>Добро пожаловать в нашу библиотеку</h3>
+                  <p>Выберите жанр чтобы увидеть доступные материалы</p>
+              </div>
+          </div>
+      </div>
     </main>
 
     <footer class="footer">
       <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
     </footer>
+    
+<script>
+    // Данные о книгах из Django
+    const booksData = [
+        {% for book in books %}
+        {
+            title: "{{ book.title|escapejs }}",
+            author: "{{ book.author|escapejs }}",
+            description: "{{ book.description|escapejs }}",
+            genre: "{{ book.genre }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    function displayBooks(genre = 'all') {
+        const booksContainer = document.getElementById('books-container');
+        
+        const filteredBooks = genre === 'all' 
+            ? booksData 
+            : booksData.filter(book => {
+                const matches = book.genre === genre;
+                return matches;
+            });
+
+        if (filteredBooks.length === 0) {
+            booksContainer.innerHTML = `
+                <div class="welcome-message">
+                    <h3>Книги не найдены</h3>
+                    <p>Попробуйте выбрать другой жанр</p>
+                    <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
+                </div>
+            `;
+            return;
+        }
+
+        booksContainer.innerHTML = filteredBooks.map(book => `
+            <div class="book-card">
+                <h3 class="book-title">${book.title}</h3>
+                <p class="book-author">${book.author}</p>
+                <p class="book-description">${book.description}</p>
+                <span class="book-genre">${getGenreDisplay(book.genre)}</span>
+            </div>
+        `).join('');
+    }
+
+    function getGenreDisplay(genre) {
+        const genres = {
+            'художественная': 'Художественные',
+            'научная': 'Научные',
+            'историческая': 'Исторические',
+            'образовательная': 'Образовательные'
+        };
+        return genres[genre] || genre;
+    }
+
+    function setupGenreButtons() {
+        const genreButtons = document.querySelectorAll('.genre-btn');
+        console.log('Найдено кнопок жанров:', genreButtons.length);
+        
+        genreButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                
+                genreButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const genre = this.getAttribute('data-genre');
+                displayBooks(genre);
+            });
+        });
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        setupGenreButtons();
+        
+        if (booksData.length > 0) {
+            displayBooks('all');
+        } else {
+            console.log('Нет книг для отображения');
+        }
+    });
+</script>
   </body>
 </html>
