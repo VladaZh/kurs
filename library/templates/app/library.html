@@ -52,86 +52,99 @@
       <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
     </footer>
     
-<script>
-    // Данные о книгах из Django
-    const booksData = [
-        {% for book in books %}
-        {
-            title: "{{ book.title|escapejs }}",
-            author: "{{ book.author|escapejs }}",
-            description: "{{ book.description|escapejs }}",
-            genre: "{{ book.genre }}"
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+    <script>
+        const booksData = [
+            {% for book in books %}
+            {
+              id: {{ book.id }},
+              title: "{{ book.title|escapejs }}",
+              author: "{{ book.author|escapejs }}",
+              description: "{{ book.description|escapejs }}",
+              genre: "{{ book.genre }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
 
-    function displayBooks(genre = 'all') {
-        const booksContainer = document.getElementById('books-container');
-        
-        const filteredBooks = genre === 'all' 
-            ? booksData 
-            : booksData.filter(book => {
-                const matches = book.genre === genre;
-                return matches;
+        function setupBookCardClicks() {
+    // Обработчик кликов на карточки книг
+          document.addEventListener('click', function(event) {
+              const bookCard = event.target.closest('.book-card');
+              if (bookCard) {
+                  const bookId = bookCard.getAttribute('data-book-id');
+                  if (bookId) {
+                      window.location.href = `/book/${bookId}/`;
+                  }
+              }
             });
-
-        if (filteredBooks.length === 0) {
-            booksContainer.innerHTML = `
-                <div class="welcome-message">
-                    <h3>Книги не найдены</h3>
-                    <p>Попробуйте выбрать другой жанр</p>
-                    <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
-                </div>
-            `;
-            return;
         }
 
-        booksContainer.innerHTML = filteredBooks.map(book => `
-            <div class="book-card">
-                <h3 class="book-title">${book.title}</h3>
-                <p class="book-author">${book.author}</p>
-                <p class="book-description">${book.description}</p>
-                <span class="book-genre">${getGenreDisplay(book.genre)}</span>
-            </div>
-        `).join('');
-    }
+        function displayBooks(genre = 'all') {
+            const booksContainer = document.getElementById('books-container');
+            
+            const filteredBooks = genre === 'all' 
+                ? booksData 
+                : booksData.filter(book => {
+                    const matches = book.genre === genre;
+                    return matches;
+                });
 
-    function getGenreDisplay(genre) {
-        const genres = {
-            'художественная': 'Художественные',
-            'научная': 'Научные',
-            'историческая': 'Исторические',
-            'образовательная': 'Образовательные'
-        };
-        return genres[genre] || genre;
-    }
+            if (filteredBooks.length === 0) {
+                booksContainer.innerHTML = `
+                    <div class="welcome-message">
+                        <h3>Книги не найдены</h3>
+                        <p>Попробуйте выбрать другой жанр</p>
+                        <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
+                    </div>
+                `;
+                return;
+            }
 
-    function setupGenreButtons() {
-        const genreButtons = document.querySelectorAll('.genre-btn');
-        console.log('Найдено кнопок жанров:', genreButtons.length);
-        
-        genreButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                
-                genreButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                
-                const genre = this.getAttribute('data-genre');
-                displayBooks(genre);
+            booksContainer.innerHTML = filteredBooks.map(book => `
+              <a href="/book/${book.id}/" class="book-card-link">
+                  <div class="book-card">
+                      <h3 class="book-title">${book.title}</h3>
+                      <p class="book-author">${book.author}</p>
+                      <p class="book-description">${book.description}</p>
+                      <span class="book-genre">${getGenreDisplay(book.genre)}</span>
+                  </div>
+              </a>
+            `).join('');
+        }
+
+        function getGenreDisplay(genre) {
+            const genres = {
+                'художественная': 'Художественные',
+                'научная': 'Научные',
+                'историческая': 'Исторические',
+                'образовательная': 'Образовательные'
+            };
+            return genres[genre] || genre;
+        }
+
+        function setupGenreButtons() {
+            const genreButtons = document.querySelectorAll('.genre-btn');
+            
+            genreButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    
+                    genreButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const genre = this.getAttribute('data-genre');
+                    displayBooks(genre);
+                });
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupGenreButtons();
+            
+            if (booksData.length > 0) {
+                displayBooks('all');
+            } else {
+                console.log('Нет книг для отображения');
+            }
         });
-    }
-
-    // Инициализация
-    document.addEventListener('DOMContentLoaded', function() {
-        setupGenreButtons();
-        
-        if (booksData.length > 0) {
-            displayBooks('all');
-        } else {
-            console.log('Нет книг для отображения');
-        }
-    });
-</script>
+    </script>
   </body>
 </html>
