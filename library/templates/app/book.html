@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Библиотека</title>
+    
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+        <link rel="icon" type="image/png" href="{% static 'images/Group_2_2.png' %}">
+    </head>
+
+    <body>
+        <header>
+        <nav>
+            <ul class="menu-items">
+            <li class="menu-item"><a href="{% url 'library' %}">Библиотека</a></li>
+            <li class="menu-item"><a href="{% url 'archive' %}">Архив</a></li>
+            </ul>
+        </nav>
+        <a href="{% url 'library' %}">
+            <img src="{% static 'images/Group_2_2.png' %}" alt="Логотип" class="logo">
+        </a>
+        <a href="{% url 'profile' %}" class="profile-link">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNjRkMmUiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSI5IiBmaWxsPSIjZjVmY2M2Ii8+PHBhdGggZD0iTTQ4IDUyYzAtOC44MzctNy4xNjMtMTYtMTYtMTZzLTE2IDcuMTYzLTE2IDE2aDMyeiIgZmlsbD0iI2Y1ZmNjNiIvPjwvc3ZnPg==" 
+        alt="Профиль" class="profile-icon">
+        </a>
+        </header>
+        <main class="books-information">
+            <div class="book-detail-card">
+                <div class="book-left-side">
+                    <h2 class="book-title">{{ book.title }}</h2>
+                    <span class="book-genre">{{ book.genre }}</span>
+                </div>
+                
+                <div class="book-right-side">
+                    <p class="book-author">{{ book.author }}</p>
+                    <p class="book-description">{{ book.description }}</p>
+                </div>
+            </div>
+        </main>
+        </main>
+        <footer class="footer">
+            <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
+        </footer>
+    </body>
+</html>

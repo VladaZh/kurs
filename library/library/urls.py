@@ -22,4 +22,6 @@ urlpatterns = [
     path('', views.library, name='library'),
     path('archive/', views.archive, name='archive'),
     path('profile/', views.profile, name='profile'),
+    path('admin/', admin.site.urls),
+    path('book/<int:book_id>/', views.book_detail, name='book_detail'),
 ]

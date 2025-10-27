@@ -17,7 +17,9 @@
           <li class="menu-item"><a href="{% url 'archive' %}">Архив</a></li>
         </ul>
       </nav>
-      <img src="{% static 'images/Group_2_2.png' %}" alt="Логотип" class="logo">
+      <a href="{% url 'library' %}">
+        <img src="{% static 'images/Group_2_2.png' %}" alt="Логотип" class="logo">
+      </a>
       <a href="{% url 'profile' %}" class="profile-link">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNjRkMmUiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSI5IiBmaWxsPSIjZjVmY2M2Ii8+PHBhdGggZD0iTTQ4IDUyYzAtOC44MzctNy4xNjMtMTYtMTYtMTZzLTE2IDcuMTYzLTE2IDE2aDMyeiIgZmlsbD0iI2Y1ZmNjNiIvPjwvc3ZnPg==" 
       alt="Профиль" class="profile-icon">
@@ -29,27 +31,122 @@
             <h2 class="section-title">Выберите жанр</h2>
             <div class="genres-grid">
                 <button class="genre-btn active" data-genre="all">Все жанры</button>
-                <button class="genre-btn" data-genre="fiction">Художественные</button>
-                <button class="genre-btn" data-genre="science">Научные</button>
-                <button class="genre-btn" data-genre="history">Исторические</button>
-                <button class="genre-btn" data-genre="education">Образовательные</button>
+                <button class="genre-btn" data-genre="Художественные">Художественные</button>
+                <button class="genre-btn" data-genre="Научные">Научные</button>
+                <button class="genre-btn" data-genre="Исторические">Исторические</button>
+                <button class="genre-btn" data-genre="Образовательные">Образовательные</button>
             </div>
         </div>
     </section>
 
-    <main class="content-section">
-        <div class="container">
-            <div class="books-grid" id="books-container">
-                <div class="welcome-message">
-                    <h3>Добро пожаловать в нашу библиотеку</h3>
-                    <p>Выберите жанр чтобы увидеть доступные материалы</p>
-                </div>
-            </div>
-        </div>
+  <main class="content-section">
+      <div class="container">
+          <div class="books-grid" id="books-container">
+              <div class="welcome-message">
+                  <h3>Добро пожаловать в нашу библиотеку</h3>
+                  <p>Выберите жанр чтобы увидеть доступные материалы</p>
+              </div>
+          </div>
+      </div>
     </main>
 
     <footer class="footer">
       <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
     </footer>
+    
+    <script>
+        const booksData = [
+            {% for book in books %}
+            {
+              id: {{ book.id }},
+              title: "{{ book.title|escapejs }}",
+              author: "{{ book.author|escapejs }}",
+              description: "{{ book.description|escapejs }}",
+              genre: "{{ book.genre }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        function setupBookCardClicks() {
+    // Обработчик кликов на карточки книг
+          document.addEventListener('click', function(event) {
+              const bookCard = event.target.closest('.book-card');
+              if (bookCard) {
+                  const bookId = bookCard.getAttribute('data-book-id');
+                  if (bookId) {
+                      window.location.href = `/book/${bookId}/`;
+                  }
+              }
+            });
+        }
+
+        function displayBooks(genre = 'all') {
+            const booksContainer = document.getElementById('books-container');
+            
+            const filteredBooks = genre === 'all' 
+                ? booksData 
+                : booksData.filter(book => {
+                    const matches = book.genre === genre;
+                    return matches;
+                });
+
+            if (filteredBooks.length === 0) {
+                booksContainer.innerHTML = `
+                    <div class="welcome-message">
+                        <h3>Книги не найдены</h3>
+                        <p>Попробуйте выбрать другой жанр</p>
+                        <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            booksContainer.innerHTML = filteredBooks.map(book => `
+              <a href="/book/${book.id}/" class="book-card-link">
+                  <div class="book-card">
+                      <h3 class="book-title">${book.title}</h3>
+                      <p class="book-author">${book.author}</p>
+                      <p class="book-description">${book.description}</p>
+                      <span class="book-genre">${getGenreDisplay(book.genre)}</span>
+                  </div>
+              </a>
+            `).join('');
+        }
+
+        function getGenreDisplay(genre) {
+            const genres = {
+                'художественная': 'Художественные',
+                'научная': 'Научные',
+                'историческая': 'Исторические',
+                'образовательная': 'Образовательные'
+            };
+            return genres[genre] || genre;
+        }
+
+        function setupGenreButtons() {
+            const genreButtons = document.querySelectorAll('.genre-btn');
+            
+            genreButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    
+                    genreButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const genre = this.getAttribute('data-genre');
+                    displayBooks(genre);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupGenreButtons();
+            
+            if (booksData.length > 0) {
+                displayBooks('all');
+            } else {
+                console.log('Нет книг для отображения');
+            }
+        });
+    </script>
   </body>
 </html>
