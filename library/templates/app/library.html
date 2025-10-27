@@ -61,14 +61,13 @@
               id: {{ book.id }},
               title: "{{ book.title|escapejs }}",
               author: "{{ book.author|escapejs }}",
-              description: "{{ book.description|escapejs }}",
+              description_short: "{{ book.description_short|escapejs }}",
               genre: "{{ book.genre }}"
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         ];
 
         function setupBookCardClicks() {
-    // Обработчик кликов на карточки книг
           document.addEventListener('click', function(event) {
               const bookCard = event.target.closest('.book-card');
               if (bookCard) {
@@ -106,7 +105,7 @@
                   <div class="book-card">
                       <h3 class="book-title">${book.title}</h3>
                       <p class="book-author">${book.author}</p>
-                      <p class="book-description">${book.description}</p>
+                      <p class="book-description">${book.description_short}</p>
                       <span class="book-genre">${getGenreDisplay(book.genre)}</span>
                   </div>
               </a>
