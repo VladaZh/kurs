@@ -31,10 +31,10 @@
             <h2 class="section-title">Выберите категорию</h2>
             <div class="genres-grid">
                 <button class="genre-btn active" data-genre="all">Все статьи</button>
-                <button class="genre-btn" data-genre="fiction">Технические</button>
-                <button class="genre-btn" data-genre="science">Медицинские</button>
-                <button class="genre-btn" data-genre="education">Химические</button>
-                <button class="genre-btn" data-genre="education">Гуманитарные</button>
+                <button class="genre-btn" data-genre="Технические">Технические</button>
+                <button class="genre-btn" data-genre="Медицинские">Медицинские</button>
+                <button class="genre-btn" data-genre="Химические">Химические</button>
+                <button class="genre-btn" data-genre="Гуманитарные">Гуманитарные</button>
             </div>
         </div>
     </section>
@@ -53,5 +53,98 @@
     <footer class="footer">
       <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
     </footer>
+    <script>
+        const articlesData = [
+            {% for article in articles %}
+            {
+              id: {{ article.id }},
+              title: "{{ article.title|escapejs }}",
+              author: "{{ article.author|escapejs }}",
+              description_short: "{{ article.description_short|escapejs }}",
+              genre: "{{ article.genre }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        function setupArticleCardClicks() {
+          document.addEventListener('click', function(event) {
+              const articleCard = event.target.closest('.books-card');
+              if (articleCard) {
+                  const articleId = articleCard.getAttribute('article-article-id');
+                  if (articleId) {
+                      window.location.href = `/article/${articleId}/`;
+                  }
+              }
+            });
+        }
+
+        function displayArticles(genre = 'all') {
+            const articlesContainer = document.getElementById('books-container');
+            
+            const filteredArticles = genre === 'all' 
+                ? articlesData 
+                : articlesData.filter(article => {
+                    const matches = article.genre === genre;
+                    return matches;
+                });
+
+            if (filteredArticles.length === 0) {
+                articlesContainer.innerHTML = `
+                    <div class="welcome-message">
+                        <h3>Статьи не найдены</h3>
+                        <p>Попробуйте выбрать другой жанр</p>
+                        <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            articlesContainer.innerHTML = filteredArticles.map(article => `
+              <a href="/article/${article.id}/" class="book-card-link">
+                  <div class="book-card">
+                      <h3 class="book-title">${article.title}</h3>
+                      <p class="book-author">${article.author}</p>
+                      <p class="book-description">${article.description_short}</p>
+                      <span class="book-genre">${getGenreDisplay(article.genre)}</span>
+                  </div>
+              </a>
+            `).join('');
+        }
+
+        function getGenreDisplay(genre) {
+            const genres = {
+              'Технические': 'Технические',
+              'Медицинские': 'Медицинские',
+              'Химические': 'Химические',
+              'Гуманитарные': 'Гуманитарные'
+            };
+            return genres[genre] || genre;
+        }
+
+        function setupGenreButtons() {
+            const genreButtons = document.querySelectorAll('.genre-btn');
+            
+            genreButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    
+                    genreButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const genre = this.getAttribute('data-genre');
+                    displayArticles(genre);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupGenreButtons();
+            
+            if (articlesData.length > 0) {
+                displayArticles('all');
+            } else {
+                console.log('Нет статей для отображения');
+            }
+        });
+    </script>
   </body>
 </html>

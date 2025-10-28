@@ -24,4 +24,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('admin/', admin.site.urls),
     path('book/<int:book_id>/', views.book_detail, name='book_detail'),
+    path('article/<int:article_id>/', views.article_detail, name='article_detail'),
 ]
