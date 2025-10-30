@@ -68,20 +68,6 @@ header {
     align-self: center;
 }
 
-/* .logo {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    max-height: 90px;
-    display: block;
-    align-self: center;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    border: 1px solid #e8e8e8;
-} */
-
 .profile-link {
     justify-self: center;
     align-self: center;
@@ -94,7 +80,7 @@ header {
     justify-self: center;
     align-self: center;
     border-radius: 50%;
-
+    transition: all 0.3s ease;
 }
 
 .profile-icon:hover {
@@ -223,7 +209,6 @@ header {
     margin-bottom: 15px;
 }
 
-/* Стили для страницы детальной информации о книге с Flexbox */
 .books-information {
     background: linear-gradient(135deg, #fefefe 0%, #f8f8f8 100%);
     min-height: 70vh;
@@ -245,7 +230,6 @@ header {
     gap: 50px;
 }
 
-/* Левая часть - название и жанр */
 .book-left-side {
     flex: 0 0 300px;
     border-right: 2px solid #d4af37;
@@ -277,7 +261,6 @@ header {
     align-self: flex-start;
 }
 
-/* Правая часть - информация о книге */
 .book-right-side {
     flex: 1;
     display: flex;
@@ -305,11 +288,537 @@ header {
     justify-content: center;
     align-items: center;
     border-top: 3px solid #d4af37;
-    box-shadow: 20 2px 0px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
 }
 
 .footer-copyright {
     font-size: 16px;
     color: #164d2e;
     margin: 0;
+}
+
+.profile-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.profile-section {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    text-align: center;
+}
+
+.profile-section h1 {
+    color: #164d2e;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+}
+
+.profile-info {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.profile-info h2 {
+    color: #164d2e;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.profile-info p {
+    margin: 20px 0;
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.profile-info strong {
+    color: #164d2e;
+    font-weight: 600;
+}
+
+.auth-section {
+    width: 100%;
+}
+
+.auth-form {
+    display: none !important;
+}
+
+.auth-form.active {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-tabs {
+    display: flex;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e8e8e8;
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 5px;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 20px;
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-weight: 500;
+}
+
+.tab:hover {
+    color: #164d2e;
+    background-color: rgba(22, 77, 46, 0.05);
+}
+
+.tab.active {
+    color: #164d2e;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+}
+
+.form-title {
+    text-align: center;
+    color: #164d2e;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e8e8e8;
+    position: relative;
+}
+
+.form-title::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: #d4af37;
+    border-radius: 2px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #164d2e;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.form-control,
+.form-group input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    background: #f8f8f8;
+}
+
+.form-control:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: #164d2e;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(22, 77, 46, 0.1);
+}
+
+.form-control::placeholder,
+.form-group input::placeholder {
+    color: #999;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(22, 77, 46, 0.3);
+}
+
+.submit-btn:focus {
+    outline: 2px solid #164d2e;
+    outline-offset: 2px;
+}
+
+.submit-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.submit-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.logout-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    margin-top: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+    text-decoration: none;
+    color: white;
+}
+
+.admin-link {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.admin-link a {
+    color: #164d2e;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.admin-link a:hover {
+    color: #d4af37;
+    text-decoration: underline;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.success-message {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.auth-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.auth-link {
+    display: block;
+    text-align: center;
+    padding: 12px 20px;
+    color: #164d2e;
+    text-decoration: none;
+    border: 2px solid #164d2e;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    background: white;
+}
+
+.auth-link:hover {
+    background-color: #164d2e;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 77, 46, 0.3);
+}
+
+.auth-link:focus {
+    outline: 2px solid #164d2e;
+    outline-offset: 2px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Accessibility Improvements */
+.form-group:focus-within label {
+    color: #164d2e;
+    font-weight: 600;
+}
+
+.form-group:focus-within .form-control,
+.form-group:focus-within input {
+    border-color: #164d2e;
+}
+
+.tab:focus {
+    outline: 2px solid #164d2e;
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    header {
+        height: auto;
+        padding: 15px 20px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .menu-items {
+        gap: 15px;
+        order: 3;
+        grid-column: 1;
+    }
+
+    .menu-item {
+        font-size: 16px;
+        padding: 10px 16px;
+    }
+
+    .logo {
+        max-height: 80px;
+        order: 1;
+    }
+
+    .profile-link {
+        order: 2;
+        justify-self: center;
+    }
+
+    .profile-container,
+    .profile-section {
+        margin: 20px;
+        padding: 30px;
+    }
+
+    .book-detail-card {
+        flex-direction: column;
+        padding: 30px;
+        gap: 30px;
+    }
+
+    .book-left-side {
+        flex: none;
+        border-right: none;
+        border-bottom: 2px solid #d4af37;
+        padding-right: 0;
+        padding-bottom: 30px;
+    }
+
+    .form-tabs {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .tab {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+    }
+
+    .profile-info h2 {
+        font-size: 1.5rem;
+    }
+
+    .profile-info p {
+        font-size: 16px;
+    }
+
+    .auth-links {
+        gap: 12px;
+    }
+
+    .auth-link {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .form-control,
+    .form-group input {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container,
+    .profile-section {
+        margin: 15px;
+        padding: 25px;
+    }
+
+    .form-control,
+    .form-group input {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .auth-link {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .menu-items {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .menu-item {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .genre-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+
+    .book-title {
+        font-size: 16px;
+    }
+
+    .form-title {
+        font-size: 1.6rem;
+    }
+
+    .error-message,
+    .success-message {
+        font-size: 13px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-container,
+    .profile-section {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .auth-links {
+        gap: 8px;
+    }
+
+    .auth-link {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .form-control,
+    .form-group input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
 }

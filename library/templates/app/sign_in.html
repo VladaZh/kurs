@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Профиль</title>
+    <title>Вход</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="icon" type="image/png" href="{% static 'images/Group_2_2.png' %}">
@@ -27,25 +27,35 @@
 
     <main class="content-section">
         <div class="container">
-            {% if user.is_authenticated %}
-            <section class="profile-container">
-                <h1 class="form-title">Добро пожаловать, {{ user.first_name }} {{ user.last_name }}!</h1>
-                <div class="profile-info">
-                    <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
-                </div>
-                
-                {% if user.is_staff %}
-                <div class="admin-link">
-                    <a href="{% url 'admin:index' %}" class="admin-btn">Панель администратора</a>
-                </div>
-                {% endif %}
-                
-                <a href="{% url 'logout' %}" class="logout-btn">Выйти из аккаунта</a>
-            </section>
-            {% else %}
-            {% endif %}
+            <div class="profile-container">
+                <section class="signup-form">
+                    <h2 class="form-title">Вход</h2>
+                    
+                    {% if error %}
+                    <div class="error-message">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" class="login-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" placeholder="Email" required value="{{ request.POST.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Пароль:</label>
+                            <input type="password" id="password" name="password" placeholder="Пароль" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Войти</button>
+                    </form>
+
+                    <div class="auth-links">
+                        <a href="{% url 'sign_up' %}" class="auth-link">Регистрация</a>
+                        <a href="/admin/" class="auth-link">Вход для библиотекаря</a>
+                    </div>
+                </section>
+            </div>
         </div>
     </main>
 
