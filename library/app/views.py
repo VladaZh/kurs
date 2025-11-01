@@ -3,7 +3,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .forms import SignUpForm, SignInForm
-from .models import Book, Article
+from .models import Book, Article, Profile
+from django.contrib.auth.decorators import login_required
 
 def library(request):
     books = Book.objects.all()
@@ -122,3 +123,17 @@ def article_detail(request, article_id):
         'article': article
     }
     return render(request, 'app/article.html', context)
+
+@login_required
+def profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    user_books = profile.books.all()
+    
+    context = {
+        'user': request.user,
+        'profile': profile,
+        'user_books': user_books,
+        'is_authenticated': True
+    }
+    return render(request, 'app/profile.html', context)
