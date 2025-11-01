@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Book, Profile
-from .models import Article
+from .models import Book, Profile, Article
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
@@ -9,7 +8,7 @@ class ProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'Профиль'
     # Показываем связанные книги через фильтрацию
-    filter_horizontal = ['books']  # Для ManyToManyField
+    filter_horizontal = ['books', 'articles']  # Для ManyToManyField
     extra = 0
 
 # Кастомный UserAdmin для отображения профиля

@@ -36,7 +36,7 @@ class Article(models.Model):
     description_short = models.TextField(verbose_name='Краткое описание')
     description_long = models.TextField(verbose_name='Подробное описание')
     year = models.IntegerField(verbose_name='Год публикации')
-    quantity = models.IntegerField(verbose_name='В наличии')
+    quantity = models.BooleanField(verbose_name='В наличии', default=True)
     genre = models.CharField(
         max_length=100, 
         verbose_name="Жанр",
@@ -58,6 +58,7 @@ class Article(models.Model):
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
     books = models.ManyToManyField('Book', blank=True, related_name='profiles')
+    articles = models.ManyToManyField('Article', blank=True, related_name='profiles')
 
     def __str__(self):
         return f"{self.user.username} Profile"
