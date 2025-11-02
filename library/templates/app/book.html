@@ -34,11 +34,20 @@
                 </div>
                 
                 <div class="book-right-side">
-                    <p class="book-author">{{ book.author }}</p>
+                    <div class="book-author">
+                        {{ book.author }}
+                        <div class="book-availability-section">
+                            {% if book.quantity == 'В наличии' %}
+                                <button class="reserve-btn">Забронировать</button>
+                            {% else %}
+                                <div class="unavailable-text">Нет в наличии</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
                     <p class="book-description">{{ book.description_long }}</p>
                 </div>
             </div>
-        </main>
         </main>
         <footer class="footer">
             <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>

@@ -10,7 +10,14 @@ class Book(models.Model):
     description_short = models.TextField(verbose_name='Краткое описание')
     description_long = models.TextField(verbose_name='Подробное описание')
     year = models.IntegerField(verbose_name='Год издания')
-    quantity = models.BooleanField(verbose_name='В наличии')
+    quantity = models.CharField(
+        max_length=13,
+        verbose_name="В наличии",
+        choices=[
+            ('В наличии', 'В наличии'),
+            ('Нет в наличии', 'Нет в наличии')
+        ]
+    )
     genre = models.CharField(
         max_length=100, 
         verbose_name="Жанр",
@@ -36,7 +43,14 @@ class Article(models.Model):
     description_short = models.TextField(verbose_name='Краткое описание')
     description_long = models.TextField(verbose_name='Подробное описание')
     year = models.IntegerField(verbose_name='Год публикации')
-    quantity = models.BooleanField(verbose_name='В наличии', default=True)
+    quantity = models.CharField(
+        max_length=13,
+        verbose_name="В наличии",
+        choices=[
+            ('В наличии', 'В наличии'),
+            ('Нет в наличии', 'Нет в наличии')
+        ]
+    )
     genre = models.CharField(
         max_length=100, 
         verbose_name="Жанр",
