@@ -26,6 +26,25 @@
       </a>
     </header>
 
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Поиск книг по названию или автору..." 
+                    class="search-input"
+                >
+                <button type="button" id="search-btn" class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
     <section class="genre-selector">
         <div class="container">
             <h2 class="section-title">Выберите жанр</h2>
@@ -69,17 +88,35 @@
             {% endfor %}
         ];
 
-        function displayBooks(genre = 'all') {
-            const booksContainer = document.getElementById('books-container');
-            
-            const filteredBooks = genre === 'all' 
-                ? booksData 
-                : booksData.filter(book => {
+        let currentGenre = 'all';
+        let currentSearch = '';
+        let searchTimeout;
+
+        function filterBooks(genre = 'all', search = '') {
+            let filteredBooks = booksData;
+            if (genre !== 'all') {
+                filteredBooks = filteredBooks.filter(book => {
                     const bookGenreDisplay = getGenreDisplay(book.genre);
                     return bookGenreDisplay === genre;
                 });
+            }
 
-            // Сортируем книги: сначала доступные, потом недоступные
+            if (search.trim() !== '') {
+                const searchTerm = search.toLowerCase().trim();
+                filteredBooks = filteredBooks.filter(book => {
+                    return book.title.toLowerCase().includes(searchTerm) || 
+                           book.author.toLowerCase().includes(searchTerm);
+                });
+            }
+
+            return filteredBooks;
+        }
+
+        function displayBooks(genre = 'all', search = '') {
+            const booksContainer = document.getElementById('books-container');
+            
+            const filteredBooks = filterBooks(genre, search);
+
             const sortedBooks = filteredBooks.sort((a, b) => {
                 if (a.is_available && !b.is_available) return -1;
                 if (!a.is_available && b.is_available) return 1;
@@ -87,13 +124,25 @@
             });
 
             if (sortedBooks.length === 0) {
-                booksContainer.innerHTML = `
-                    <div class="welcome-message">
-                        <h3>Книги не найдены</h3>
-                        <p>Попробуйте выбрать другой жанр</p>
-                        <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
-                    </div>
-                `;
+                let message = '';
+                if (search !== '') {
+                    message = `
+                        <div class="welcome-message">
+                            <h3>Книги не найдены</h3>
+                            <p>По запросу "${search}" ничего не найдено</p>
+                            <p>Попробуйте изменить поисковый запрос или выбрать другой жанр</p>
+                        </div>
+                    `;
+                } else {
+                    message = `
+                        <div class="welcome-message">
+                            <h3>Книги не найдены</h3>
+                            <p>Попробуйте выбрать другой жанр</p>
+                            <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
+                        </div>
+                    `;
+                }
+                booksContainer.innerHTML = message;
                 return;
             }
 
@@ -130,17 +179,52 @@
                     genreButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     
-                    const genre = this.getAttribute('data-genre');
-                    displayBooks(genre);
+                    currentGenre = this.getAttribute('data-genre');
+                    displayBooks(currentGenre, currentSearch);
                 });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+
+            function performSearch() {
+                currentSearch = searchInput.value;
+                displayBooks(currentGenre, currentSearch);
+            }
+
+            function debouncedSearch() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                
+                if (value === '') {
+                    currentSearch = '';
+                    displayBooks(currentGenre, '');
+                } else {
+                    debouncedSearch();
+                }
             });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             setupGenreButtons();
+            setupSearch();
             
             if (booksData.length > 0) {
-                displayBooks('all');
+                displayBooks('all', '');
             } else {
                 console.log('Нет книг для отображения');
             }

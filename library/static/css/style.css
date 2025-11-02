@@ -88,7 +88,80 @@ header {
     box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
 }
 
-/* Стили для секции жанров */
+.search-section {
+    background: linear-gradient(135deg, #fefefe 0%, #f8f8f8 100%);
+    padding: 20px 0;
+    width: 100%;
+}
+
+.search-container {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #164d2e;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: 'Georgia', serif;
+    background: white;
+    color: #2c2c2c;
+}
+
+.search-input:focus {
+    border-color: #0f3a22;
+    box-shadow: 0 0 0 3px rgba(22, 77, 46, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+    font-family: 'Georgia', serif;
+}
+
+.search-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Georgia', serif;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 77, 46, 0.3);
+}
+
+.clear-search-btn {
+    padding: 8px 16px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: 'Georgia', serif;
+}
+
+.clear-search-btn:hover {
+    background: #5a6268;
+}
+
 .genre-selector {
     background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
     padding: 40px 0;
@@ -513,7 +586,6 @@ header {
     box-shadow: 0 4px 12px rgba(22, 77, 46, 0.3);
 }
 
-/* Стили для страницы книги */
 .author-and-availability {
     display: flex;
     justify-content: space-between;
@@ -571,7 +643,6 @@ header {
     text-decoration: none;
 }
 
-/* Стили для статусов */
 .pending-text,
 .reserved-text,
 .reserved-by-you,
@@ -613,231 +684,6 @@ header {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    header {
-        height: auto;
-        padding: 15px 20px;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        text-align: center;
-    }
-
-    .menu-items {
-        gap: 15px;
-        order: 3;
-        grid-column: 1;
-    }
-
-    .menu-item {
-        font-size: 16px;
-        padding: 10px 16px;
-    }
-
-    .logo {
-        max-height: 80px;
-        order: 1;
-    }
-
-    .profile-link {
-        order: 2;
-        justify-self: center;
-    }
-
-    .genre-selector {
-        padding: 30px 0;
-    }
-
-    .genres-grid {
-        gap: 10px;
-    }
-
-    .genre-btn {
-        padding: 10px 18px;
-        font-size: 14px;
-    }
-
-    .profile-container,
-    .profile-section {
-        margin: 20px;
-        padding: 30px;
-    }
-
-    .book-detail-card {
-        flex-direction: column;
-        padding: 30px;
-        gap: 30px;
-    }
-
-    .book-left-side {
-        flex: none;
-        border-right: none;
-        border-bottom: 2px solid #d4af37;
-        padding-right: 0;
-        padding-bottom: 30px;
-    }
-
-    .author-and-availability {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .book-right-side .book-author {
-        margin-bottom: 0;
-    }
-    
-    .reserve-btn {
-        width: auto;
-    }
-    
-    .status-section {
-        margin-bottom: 20px;
-    }
-
-    .form-title {
-        font-size: 1.8rem;
-    }
-
-    .profile-info h2 {
-        font-size: 1.5rem;
-    }
-
-    .profile-info p {
-        font-size: 16px;
-    }
-
-    .auth-links {
-        gap: 12px;
-    }
-
-    .auth-link {
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-
-    .books-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-    }
-
-    .form-control,
-    .form-group input {
-        padding: 14px 18px;
-        font-size: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .profile-container,
-    .profile-section {
-        margin: 15px;
-        padding: 25px;
-    }
-
-    .form-control,
-    .form-group input {
-        padding: 12px 15px;
-        font-size: 14px;
-    }
-
-    .submit-btn {
-        padding: 14px;
-        font-size: 14px;
-    }
-
-    .logout-btn {
-        padding: 12px 30px;
-        font-size: 14px;
-    }
-
-    .auth-link {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
-
-    .menu-items {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .menu-item {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-
-    .section-title {
-        font-size: 24px;
-    }
-
-    .genre-btn {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-
-    .book-card {
-        padding: 15px;
-    }
-
-    .book-title {
-        font-size: 16px;
-    }
-
-    .form-title {
-        font-size: 1.6rem;
-    }
-
-    .error-message {
-        font-size: 13px;
-        padding: 10px;
-    }
-
-    .book-right-side .book-author {
-        font-size: 1.3rem;
-    }
-    
-    .reserve-btn,
-    .pending-text,
-    .reserved-text,
-    .reserved-by-you,
-    .rejected-text {
-        font-size: 0.9rem;
-        padding: 8px 16px;
-    }
-}
-
-@media (max-width: 360px) {
-    .books-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-container,
-    .profile-section {
-        margin: 10px;
-        padding: 20px;
-    }
-
-    .auth-links {
-        gap: 8px;
-    }
-
-    .auth-link {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .form-control,
-    .form-group input {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
-
-    .genre-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
 }
 
 .unavailable-text {
@@ -959,7 +805,7 @@ header {
     display: inline-block;
     padding: 12px 24px;
     background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
-    color: white !important;
+    color: white;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
@@ -1017,7 +863,176 @@ header {
     border-bottom: none;
 }
 
+.book-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.availability-status {
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.availability-status.available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.availability-status.unavailable {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.book-card.available {
+    border-left: 4px solid #28a745;
+}
+
+.book-card.unavailable {
+    border-left: 4px solid #dc3545;
+    opacity: 0.8;
+}
+
+.profile-container {
+    max-width: 800px;
+}
+
+.profile-info {
+    text-align: left;
+}
+
+.profile-info > p {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.books-section:first-child {
+    margin-top: 0;
+}
+
+.articles-section:last-child {
+    margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
+    header {
+        height: auto;
+        padding: 15px 20px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .menu-items {
+        gap: 15px;
+        order: 3;
+        grid-column: 1;
+    }
+
+    .menu-item {
+        font-size: 16px;
+        padding: 10px 16px;
+    }
+
+    .logo {
+        max-height: 80px;
+        order: 1;
+    }
+
+    .profile-link {
+        order: 2;
+        justify-self: center;
+    }
+
+    .genre-selector {
+        padding: 30px 0;
+    }
+
+    .genres-grid {
+        gap: 10px;
+    }
+
+    .genre-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .profile-container,
+    .profile-section {
+        margin: 20px;
+        padding: 30px;
+    }
+
+    .book-detail-card {
+        flex-direction: column;
+        padding: 30px;
+        gap: 30px;
+    }
+
+    .book-left-side {
+        flex: none;
+        border-right: none;
+        border-bottom: 2px solid #d4af37;
+        padding-right: 0;
+        padding-bottom: 30px;
+    }
+
+    .author-and-availability {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .book-right-side .book-author {
+        margin-bottom: 0;
+    }
+    
+    .reserve-btn {
+        width: auto;
+    }
+    
+    .status-section {
+        margin-bottom: 20px;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+    }
+
+    .profile-info h2 {
+        font-size: 1.5rem;
+    }
+
+    .profile-info p {
+        font-size: 16px;
+    }
+
+    .auth-links {
+        gap: 12px;
+    }
+
+    .auth-link {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .form-control,
+    .form-group input {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+
     .books-grid, .articles-grid {
         grid-template-columns: 1fr;
     }
@@ -1042,6 +1057,82 @@ header {
 }
 
 @media (max-width: 480px) {
+    .profile-container,
+    .profile-section {
+        margin: 15px;
+        padding: 25px;
+    }
+
+    .form-control,
+    .form-group input {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .auth-link {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .menu-items {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .menu-item {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .genre-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+
+    .book-title {
+        font-size: 16px;
+    }
+
+    .form-title {
+        font-size: 1.6rem;
+    }
+
+    .error-message {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .book-right-side .book-author {
+        font-size: 1.3rem;
+    }
+    
+    .reserve-btn,
+    .pending-text,
+    .reserved-text,
+    .reserved-by-you,
+    .rejected-text {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
     .profile-container {
         margin: 10px;
         padding: 20px;
@@ -1069,26 +1160,34 @@ header {
     }
 }
 
-.profile-container {
-    max-width: 800px !important; 
-}
+@media (max-width: 360px) {
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
 
-.profile-info {
-    text-align: left !important; 
-}
+    .profile-container,
+    .profile-section {
+        margin: 10px;
+        padding: 20px;
+    }
 
-.profile-info > p {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 15px 0 !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .auth-links {
+        gap: 8px;
+    }
 
-.books-section:first-child {
-    margin-top: 0;
-}
+    .auth-link {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
 
-.articles-section:last-child {
-    margin-bottom: 0;
+    .form-control,
+    .form-group input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .genre-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
 }
