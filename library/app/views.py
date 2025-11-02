@@ -4,7 +4,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import SignUpForm, SignInForm
-from .models import Book, Article, Profile
+from .models import Book, Article, Profile, BookReservation
+from django.contrib import messages
 
 def library(request):
     books = Book.objects.all()
@@ -105,8 +106,17 @@ def sign_in_view(request):
 
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
+    
+    user_reservation = None
+    if request.user.is_authenticated:
+        user_reservation = BookReservation.objects.filter(
+            book=book, 
+            user=request.user
+        ).first()
+    
     context = {
-        'book': book
+        'book': book,
+        'user_reservation': user_reservation
     }
     return render(request, 'app/book.html', context)
 
@@ -152,3 +162,66 @@ def remove_article_from_profile(request, article_id):
     profile.articles.remove(article)
     
     return redirect('profile')
+
+@login_required
+def reserve_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    
+    if book.quantity != 'В наличии':
+        return redirect('book_detail', book_id=book_id)
+    
+    user_reservation = BookReservation.objects.filter(
+        book=book, 
+        user=request.user
+    ).first()
+    
+    if user_reservation:
+        user_reservation.status = 'pending'
+        user_reservation.save()
+    else:
+        BookReservation.objects.create(
+            book=book,
+            user=request.user,
+            status='pending'
+        )
+    
+    return redirect('book_detail', book_id=book_id)
+
+@login_required
+def approve_reservation(request, reservation_id):
+    if not request.user.is_staff:
+        return redirect('library')
+    
+    reservation = get_object_or_404(BookReservation, id=reservation_id)
+    
+    reservation.status = 'reserved'
+    reservation.save()
+    
+    book = reservation.book
+    book.quantity = 'Нет в наличии'
+    book.save()
+    
+    BookReservation.objects.filter(
+        book=book,
+        status='pending'
+    ).exclude(id=reservation_id).update(status='rejected')
+    
+    messages.success(request, f'Бронь книги "{book.title}" подтверждена')
+    return redirect('admin:app_bookreservation_changelist')
+
+@login_required
+def complete_reservation(request, reservation_id):
+    if not request.user.is_staff:
+        return redirect('library')
+    
+    reservation = get_object_or_404(BookReservation, id=reservation_id)
+    
+    reservation.status = 'completed'
+    reservation.save()
+    
+    book = reservation.book
+    book.quantity = 'В наличии'
+    book.save()
+    
+    messages.success(request, f'Бронь книги "{book.title}" завершена')
+    return redirect('admin:app_bookreservation_changelist')

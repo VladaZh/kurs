@@ -88,6 +88,7 @@ header {
     box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
 }
 
+/* Стили для секции жанров */
 .genre-selector {
     background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
     padding: 40px 0;
@@ -340,55 +341,6 @@ header {
     font-weight: 600;
 }
 
-.auth-section {
-    width: 100%;
-}
-
-.auth-form {
-    display: none !important;
-}
-
-.auth-form.active {
-    display: block !important;
-    animation: fadeIn 0.3s ease;
-}
-
-.form-tabs {
-    display: flex;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e8e8e8;
-    background: #f8f8f8;
-    border-radius: 12px;
-    padding: 5px;
-}
-
-.tab {
-    flex: 1;
-    padding: 12px 20px;
-    text-align: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
-    font-size: 16px;
-    color: #666;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    font-weight: 500;
-}
-
-.tab:hover {
-    color: #164d2e;
-    background-color: rgba(22, 77, 46, 0.05);
-}
-
-.tab.active {
-    color: #164d2e;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    font-weight: 600;
-}
-
 .form-title {
     text-align: center;
     color: #164d2e;
@@ -476,32 +428,6 @@ header {
     outline-offset: 2px;
 }
 
-.submit-btn:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.submit-btn.loading {
-    position: relative;
-    color: transparent;
-}
-
-.submit-btn.loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    left: 50%;
-    margin: -10px 0 0 -10px;
-    border: 2px solid transparent;
-    border-top: 2px solid #ffffff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
 .logout-btn {
     display: inline-block;
     padding: 15px 40px;
@@ -560,17 +486,6 @@ header {
     font-weight: 500;
 }
 
-.success-message {
-    color: #155724;
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 500;
-}
-
 .auth-links {
     display: flex;
     flex-direction: column;
@@ -598,9 +513,96 @@ header {
     box-shadow: 0 4px 12px rgba(22, 77, 46, 0.3);
 }
 
-.auth-link:focus {
-    outline: 2px solid #164d2e;
-    outline-offset: 2px;
+/* Стили для страницы книги */
+.author-and-availability {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.book-right-side .book-author {
+    font-size: 1.5rem;
+    color: #164d2e;
+    margin-bottom: 0;
+    font-weight: 600;
+    flex: 1;
+}
+
+.book-availability-section {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.availability-form {
+    margin: 0;
+    display: inline-block;
+}
+
+.status-section {
+    margin-bottom: 25px;
+}
+
+.reserve-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(22, 77, 46, 0.3);
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.reserve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(22, 77, 46, 0.4);
+    background: linear-gradient(135deg, #1e6b42 0%, #164d2e 100%);
+    color: white;
+    text-decoration: none;
+}
+
+/* Стили для статусов */
+.pending-text,
+.reserved-text,
+.reserved-by-you,
+.rejected-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0;
+}
+
+.pending-text {
+    color: #856404;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+}
+
+.reserved-text,
+.reserved-by-you {
+    color: #155724;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+}
+
+.rejected-text {
+    color: #721c24;
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid #dc3545;
 }
 
 @keyframes fadeIn {
@@ -613,21 +615,7 @@ header {
     100% { transform: rotate(360deg); }
 }
 
-.form-group:focus-within label {
-    color: #164d2e;
-    font-weight: 600;
-}
-
-.form-group:focus-within .form-control,
-.form-group:focus-within input {
-    border-color: #164d2e;
-}
-
-.tab:focus {
-    outline: 2px solid #164d2e;
-    outline-offset: 2px;
-}
-
+/* Адаптивность */
 @media (max-width: 768px) {
     header {
         height: auto;
@@ -658,6 +646,19 @@ header {
         justify-self: center;
     }
 
+    .genre-selector {
+        padding: 30px 0;
+    }
+
+    .genres-grid {
+        gap: 10px;
+    }
+
+    .genre-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
     .profile-container,
     .profile-section {
         margin: 20px;
@@ -678,14 +679,22 @@ header {
         padding-bottom: 30px;
     }
 
-    .form-tabs {
+    .author-and-availability {
         flex-direction: column;
-        gap: 5px;
+        align-items: flex-start;
+        gap: 15px;
     }
-
-    .tab {
-        padding: 15px;
-        font-size: 14px;
+    
+    .book-right-side .book-author {
+        margin-bottom: 0;
+    }
+    
+    .reserve-btn {
+        width: auto;
+    }
+    
+    .status-section {
+        margin-bottom: 20px;
     }
 
     .form-title {
@@ -764,8 +773,8 @@ header {
     }
 
     .genre-btn {
-        padding: 10px 18px;
-        font-size: 14px;
+        padding: 8px 16px;
+        font-size: 13px;
     }
 
     .book-card {
@@ -780,10 +789,22 @@ header {
         font-size: 1.6rem;
     }
 
-    .error-message,
-    .success-message {
+    .error-message {
         font-size: 13px;
         padding: 10px;
+    }
+
+    .book-right-side .book-author {
+        font-size: 1.3rem;
+    }
+    
+    .reserve-btn,
+    .pending-text,
+    .reserved-text,
+    .reserved-by-you,
+    .rejected-text {
+        font-size: 0.9rem;
+        padding: 8px 16px;
     }
 }
 
@@ -812,135 +833,9 @@ header {
         padding: 10px 12px;
         font-size: 13px;
     }
-}
 
-.book-availability-section {
-    margin: 15px 0 25px 0;
-}
-
-.availability-status.available .availability-text {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #155724;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border-radius: 20px;
-    border: 2px solid #28a745;
-    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.2);
-}
-
-.availability-status.unavailable .availability-text {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #721c24;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-    border-radius: 20px;
-    border: 2px solid #dc3545;
-    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.2);
-}
-
-.reserve-btn {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(22, 77, 46, 0.3);
-}
-
-.reserve-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(22, 77, 46, 0.4);
-}
-
-.reserve-btn:active {
-    transform: translateY(0);
-}
-
-@media (max-width: 768px) {
-    .availability-status {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-    
-    .reserve-btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-.book-right-side .book-author {
-    font-size: 1.5rem;
-    color: #164d2e;
-    margin-bottom: 15px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 30px;
-    flex-wrap: wrap;
-}
-
-.reserve-btn {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-size: 0.95rem;
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(22, 77, 46, 0.3);
-    white-space: nowrap;
-}
-
-.reserve-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(22, 77, 46, 0.4);
-    background: linear-gradient(135deg, #1e6b42 0%, #164d2e 100%);
-}
-
-.unavailable-text {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #721c24;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-    border-radius: 20px;
-    border: 2px solid #dc3545;
-    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.2);
-    white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-    .book-right-side .book-author {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .reserve-btn,
-    .unavailable-text {
-        width: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .book-right-side .book-author {
-        font-size: 1.3rem;
-    }
-    
-    .reserve-btn,
-    .unavailable-text {
-        font-size: 0.9rem;
-        padding: 8px 16px;
+    .genre-btn {
+        padding: 6px 12px;
+        font-size: 12px;
     }
 }

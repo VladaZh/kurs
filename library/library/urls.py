@@ -11,6 +11,7 @@ urlpatterns = [
     path('book/<int:book_id>/', views.book_detail, name='book_detail'),
     path('article/<int:article_id>/', views.article_detail, name='article_detail'),
     path('sign-up/', views.sign_up_view, name='sign_up'),
-    path('sign-in/', views.sign_in_view, name='sign_in'),  # отдельная страница входа
-    path('logout/', auth_views.LogoutView.as_view(next_page='profile'), name='logout'),
+    path('sign-in/', views.sign_in_view, name='sign_in'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='sign_in'), name='logout'),
+    path('book/<int:book_id>/reserve/', views.reserve_book, name='reserve_book'),
 ]

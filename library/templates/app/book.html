@@ -22,10 +22,11 @@
             <img src="{% static 'images/Group_2_2.png' %}" alt="Логотип" class="logo">
         </a>
         <a href="{% url 'profile' %}" class="profile-link">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNjRkMmUiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSI5IiBmaWxsPSIjZjVmY2M2Ii8+PHBhdGggZD0iTTQ4IDUyYzAtOC44MzctNy4xNjMtMTYtMTYtMTZzLTE2IDcuMTYzLTE2IDE2aDMyeiIgZmlsbD0iI2Y1ZmNjNiIvPjwvc3ZnPg==" 
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNjRkMmUiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSI5IiBmaWxsPSIjZjVmY2M2Ii8+PHBhdGggZD0iTTQ4IDUyYzAtOC44MzctNy4xNjMtMTYtMTYtMTZzLTE2IDcuMTYzLTE2IDE2aDMyeiIgZmlsbD0iI2Y1ZmNjNiIvPjwvc3ZnPg==" 
         alt="Профиль" class="profile-icon">
         </a>
         </header>
+
         <main class="books-information">
             <div class="book-detail-card">
                 <div class="book-left-side">
@@ -34,21 +35,59 @@
                 </div>
                 
                 <div class="book-right-side">
-                    <div class="book-author">
-                        {{ book.author }}
+                    <div class="author-and-availability">
+                        <div class="book-author">{{ book.author }}</div>
                         <div class="book-availability-section">
                             {% if book.quantity == 'В наличии' %}
-                                <button class="reserve-btn">Забронировать</button>
+                                {% if user.is_authenticated %}
+                                    {% if user_reservation %}
+                                        {% if user_reservation.status == 'pending' %}
+                                        {% elif user_reservation.status == 'reserved' %}
+                                        {% elif user_reservation.status == 'rejected' %}
+                                            <form method="post" action="{% url 'reserve_book' book.id %}" class="availability-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="reserve-btn">Забронировать</button>
+                                            </form>
+                                        {% elif user_reservation.status == 'completed' %}
+                                            <form method="post" action="{% url 'reserve_book' book.id %}" class="availability-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="reserve-btn">Забронировать</button>
+                                            </form>
+                                        {% endif %}
+                                    {% else %}
+                                        <form method="post" action="{% url 'reserve_book' book.id %}" class="availability-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="reserve-btn">Забронировать</button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'sign_in' %}" class="reserve-btn">Войдите, чтобы забронировать</a>
+                                {% endif %}
                             {% else %}
-                                <div class="unavailable-text">Нет в наличии</div>
+                                {% if user.is_authenticated and user_reservation and user_reservation.status == 'reserved' %}
+                                   
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
-                    
+
+                    <div class="status-section">
+                        {% if book.quantity == 'В наличии' and user.is_authenticated and user_reservation %}
+                            {% if user_reservation.status == 'pending' %}
+                                <div class="pending-text">Ожидает подтверждения</div>
+                            {% elif user_reservation.status == 'reserved' %}
+                                <div class="reserved-text">Забронировано вами</div>
+                            {% endif %}
+                        {% elif book.quantity != 'В наличии' and user.is_authenticated and user_reservation and user_reservation.status == 'reserved' %}
+                            <div class="reserved-by-you">Забронировано вами</div>
+                        {% endif %}
+                    </div>
+    
                     <p class="book-description">{{ book.description_long }}</p>
                 </div>
             </div>
         </main>
+
         <footer class="footer">
             <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
         </footer>

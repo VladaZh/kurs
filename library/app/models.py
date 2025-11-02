@@ -70,7 +70,7 @@ class Article(models.Model):
         verbose_name_plural = "статьи"
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     books = models.ManyToManyField('Book', blank=True, related_name='profiles')
     articles = models.ManyToManyField('Article', blank=True, related_name='profiles')
 
@@ -85,3 +85,28 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
+
+class BookReservation(models.Model):
+    STATUS_CHOICES = [
+        ('reserved', 'Забронирована'),
+        ('pending', 'Ожидает подтверждения'),
+        ('rejected', 'Отклонена'),
+        ('completed', 'Завершена'),
+    ]
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, verbose_name='Книга', editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', editable=False)
+    status = models.CharField(max_length=21, default="pending", verbose_name='Статус', choices=STATUS_CHOICES)
+
+
+    def __str__(self):
+        return f"Бронь {self.book.title} - {self.user.username}"
+    
+    class Meta:
+        verbose_name = 'заявка на бронь'
+        verbose_name_plural = 'заявки на бронь'
+        unique_together = ['book', 'user']

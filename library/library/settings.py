@@ -124,4 +124,4 @@ STATICFILES_DIRS = [BASE_DIR / 'static']  # ← ДОБАВЬТЕ ЭТУ СТРО
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = '/profile/reader/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/sign-in/'
