@@ -107,7 +107,6 @@ def sign_in_view(request):
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
-    # Проверяем ПОДТВЕРЖДЕННЫЕ брони других пользователей
     has_confirmed_reservation_from_others = BookReservation.objects.filter(
         book=book,
         status='reserved'
@@ -118,9 +117,8 @@ def book_detail(request, book_id):
         user_reservation = BookReservation.objects.filter(
             book=book, 
             user=request.user
-        ).first()  # Берем первую заявку пользователя
+        ).first()
     
-    # Для неавторизованных пользователей показываем общий статус
     if not request.user.is_authenticated:
         has_confirmed_reservation_from_others = BookReservation.objects.filter(
             book=book,
@@ -181,13 +179,11 @@ def remove_article_from_profile(request, article_id):
 def reserve_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
-    # Проверяем, есть ли ПОДТВЕРЖДЕННАЯ бронь (reserved) других пользователей
     has_confirmed_reservation_from_others = BookReservation.objects.filter(
         book=book,
-        status='reserved'  # Только подтвержденные брони
+        status='reserved'  
     ).exclude(user=request.user).exists()
     
-    # Если книга уже подтверждена за другим пользователем - не даем бронировать
     if has_confirmed_reservation_from_others:
         return redirect('book_detail', book_id=book_id)
     
@@ -195,16 +191,13 @@ def reserve_book(request, book_id):
     if book.quantity != 'В наличии':
         return redirect('book_detail', book_id=book_id)
     
-    # Проверяем, есть ли уже активная заявка у пользователя
     existing_user_reservation = BookReservation.objects.filter(
         book=book, 
         user=request.user,
-        status__in=['pending', 'reserved']  # Активные статусы
+        status__in=['pending', 'reserved']  
     ).first()
     
     if existing_user_reservation:
-        # Если у пользователя уже есть активная заявка, ничего не делаем
-        # или можно обновить created_at, если нужно
         pass
     else:
         # Создаем новую заявку
