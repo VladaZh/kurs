@@ -109,4 +109,3 @@ class BookReservation(models.Model):
     class Meta:
         verbose_name = 'заявка на бронь'
         verbose_name_plural = 'заявки на бронь'
-        unique_together = ['book', 'user']

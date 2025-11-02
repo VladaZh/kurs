@@ -107,9 +107,10 @@ def sign_in_view(request):
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
-    has_active_reservation_from_others = BookReservation.objects.filter(
+    # Проверяем ПОДТВЕРЖДЕННЫЕ брони других пользователей
+    has_confirmed_reservation_from_others = BookReservation.objects.filter(
         book=book,
-        status__in=['reserved', 'pending']
+        status='reserved'
     ).exclude(user=request.user).exists() if request.user.is_authenticated else False
     
     user_reservation = None
@@ -117,17 +118,18 @@ def book_detail(request, book_id):
         user_reservation = BookReservation.objects.filter(
             book=book, 
             user=request.user
-        ).first()
+        ).first()  # Берем первую заявку пользователя
     
+    # Для неавторизованных пользователей показываем общий статус
     if not request.user.is_authenticated:
-        has_active_reservation_from_others = BookReservation.objects.filter(
+        has_confirmed_reservation_from_others = BookReservation.objects.filter(
             book=book,
-            status__in=['reserved', 'pending']
+            status='reserved'
         ).exists()
     
     context = {
         'book': book,
-        'has_active_reservation_from_others': has_active_reservation_from_others,
+        'has_confirmed_reservation_from_others': has_confirmed_reservation_from_others,
         'user_reservation': user_reservation
     }
     return render(request, 'app/book.html', context)
@@ -179,32 +181,40 @@ def remove_article_from_profile(request, article_id):
 def reserve_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
-    has_active_reservation_from_others = BookReservation.objects.filter(
+    # Проверяем, есть ли ПОДТВЕРЖДЕННАЯ бронь (reserved) других пользователей
+    has_confirmed_reservation_from_others = BookReservation.objects.filter(
         book=book,
-        status__in=['reserved', 'pending']  
+        status='reserved'  # Только подтвержденные брони
     ).exclude(user=request.user).exists()
     
-    if has_active_reservation_from_others:
+    # Если книга уже подтверждена за другим пользователем - не даем бронировать
+    if has_confirmed_reservation_from_others:
         return redirect('book_detail', book_id=book_id)
     
+    # Проверяем, доступна ли книга
     if book.quantity != 'В наличии':
         return redirect('book_detail', book_id=book_id)
     
-    user_reservation = BookReservation.objects.filter(
+    # Проверяем, есть ли уже активная заявка у пользователя
+    existing_user_reservation = BookReservation.objects.filter(
         book=book, 
-        user=request.user
+        user=request.user,
+        status__in=['pending', 'reserved']  # Активные статусы
     ).first()
     
-    if user_reservation:
-        user_reservation.status = 'pending'
-        user_reservation.save()
+    if existing_user_reservation:
+        # Если у пользователя уже есть активная заявка, ничего не делаем
+        # или можно обновить created_at, если нужно
+        pass
     else:
+        # Создаем новую заявку
         BookReservation.objects.create(
             book=book,
             user=request.user,
             status='pending'
         )
     
+    return redirect('book_detail', book_id=book_id)
     return redirect('book_detail', book_id=book_id)
 
 @login_required
@@ -214,6 +224,7 @@ def approve_reservation(request, reservation_id):
     
     reservation = get_object_or_404(BookReservation, id=reservation_id)
     
+    # Меняем статус брони на 'reserved'
     reservation.status = 'reserved'
     reservation.save()
     
@@ -221,12 +232,12 @@ def approve_reservation(request, reservation_id):
     book.quantity = 'Нет в наличии'
     book.save()
     
+    # Отклоняем ВСЕ остальные заявки на эту книгу
     BookReservation.objects.filter(
-        book=book,
-        status='pending'
+        book=book
     ).exclude(id=reservation_id).update(status='rejected')
     
-    messages.success(request, f'Бронь книги "{book.title}" подтверждена')
+    messages.success(request, f'Бронь книги "{book.title}" подтверждена для пользователя {reservation.user.username}')
     return redirect('admin:app_bookreservation_changelist')
 
 @login_required
