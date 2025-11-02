@@ -102,9 +102,26 @@ class BookReservation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', editable=False)
     status = models.CharField(max_length=21, default="pending", verbose_name='Статус', choices=STATUS_CHOICES)
 
-
     def __str__(self):
         return f"Бронь {self.book.title} - {self.user.username}"
+    
+    def save(self, *args, **kwargs):
+        
+        if self.pk:
+            old_status = BookReservation.objects.get(pk=self.pk).status
+            if old_status != 'reserved' and self.status == 'reserved':
+                self.add_book_to_profile()
+        
+        super().save(*args, **kwargs)
+    
+    def add_book_to_profile(self):
+        profile, created = Profile.objects.get_or_create(user=self.user)
+        profile.books.add(self.book)
+    
+    def remove_book_from_profile(self):
+        profile = getattr(self.user, 'profile', None)
+        if profile:
+            profile.books.remove(self.book)
     
     class Meta:
         verbose_name = 'заявка на бронь'

@@ -187,7 +187,6 @@ def reserve_book(request, book_id):
     if has_confirmed_reservation_from_others:
         return redirect('book_detail', book_id=book_id)
     
-    # Проверяем, доступна ли книга
     if book.quantity != 'В наличии':
         return redirect('book_detail', book_id=book_id)
     
@@ -200,14 +199,12 @@ def reserve_book(request, book_id):
     if existing_user_reservation:
         pass
     else:
-        # Создаем новую заявку
         BookReservation.objects.create(
             book=book,
             user=request.user,
             status='pending'
         )
     
-    return redirect('book_detail', book_id=book_id)
     return redirect('book_detail', book_id=book_id)
 
 @login_required
@@ -217,20 +214,17 @@ def approve_reservation(request, reservation_id):
     
     reservation = get_object_or_404(BookReservation, id=reservation_id)
     
-    # Меняем статус брони на 'reserved'
     reservation.status = 'reserved'
-    reservation.save()
+    reservation.save()  
     
     book = reservation.book
     book.quantity = 'Нет в наличии'
     book.save()
     
-    # Отклоняем ВСЕ остальные заявки на эту книгу
     BookReservation.objects.filter(
         book=book
     ).exclude(id=reservation_id).update(status='rejected')
     
-    messages.success(request, f'Бронь книги "{book.title}" подтверждена для пользователя {reservation.user.username}')
     return redirect('admin:app_bookreservation_changelist')
 
 @login_required
@@ -239,6 +233,7 @@ def complete_reservation(request, reservation_id):
         return redirect('library')
     
     reservation = get_object_or_404(BookReservation, id=reservation_id)
+    reservation.remove_book_from_profile()
     
     reservation.status = 'completed'
     reservation.save()
@@ -247,5 +242,4 @@ def complete_reservation(request, reservation_id):
     book.quantity = 'В наличии'
     book.save()
     
-    messages.success(request, f'Бронь книги "{book.title}" завершена')
     return redirect('admin:app_bookreservation_changelist')

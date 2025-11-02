@@ -33,7 +33,25 @@
                 <div class="profile-info">
                     <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
                     <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+                    <div class="books-section">
+                        <h3>Мои книги ({{ user_books.count }})</h3>
+                        {% if user_books %}
+                            <div class="books-grid">
+                                {% for book in user_books %}
+                                <div class="book-card">
+                                    <h4 class="book-title">{{ book.title }}</h4>
+                                    <p class="book-author">{{ book.author }}</p>
+                                    <form method="post" action="{% url 'remove_book_from_profile' book.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="remove-btn">Вернуть книгу</button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="no-items">У вас пока нет забронированных книг</p>
+                        {% endif %}
+                    </div>
                 </div>
                 
                 {% if user.is_staff %}
