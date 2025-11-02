@@ -62,22 +62,12 @@
               title: "{{ book.title|escapejs }}",
               author: "{{ book.author|escapejs }}",
               description_short: "{{ book.description_short|escapejs }}",
-              genre: "{{ book.genre }}"
+              genre: "{{ book.genre }}",
+              quantity: "{{ book.quantity|escapejs }}",
+              is_available: {% if book.quantity == 'В наличии' %}true{% else %}false{% endif %}
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         ];
-
-        function setupBookCardClicks() {
-          document.addEventListener('click', function(event) {
-              const bookCard = event.target.closest('.book-card');
-              if (bookCard) {
-                  const bookId = bookCard.getAttribute('data-book-id');
-                  if (bookId) {
-                      window.location.href = `/book/${bookId}/`;
-                  }
-              }
-            });
-        }
 
         function displayBooks(genre = 'all') {
             const booksContainer = document.getElementById('books-container');
@@ -85,11 +75,18 @@
             const filteredBooks = genre === 'all' 
                 ? booksData 
                 : booksData.filter(book => {
-                    const matches = book.genre === genre;
-                    return matches;
+                    const bookGenreDisplay = getGenreDisplay(book.genre);
+                    return bookGenreDisplay === genre;
                 });
 
-            if (filteredBooks.length === 0) {
+            // Сортируем книги: сначала доступные, потом недоступные
+            const sortedBooks = filteredBooks.sort((a, b) => {
+                if (a.is_available && !b.is_available) return -1;
+                if (!a.is_available && b.is_available) return 1;
+                return 0;
+            });
+
+            if (sortedBooks.length === 0) {
                 booksContainer.innerHTML = `
                     <div class="welcome-message">
                         <h3>Книги не найдены</h3>
@@ -100,13 +97,15 @@
                 return;
             }
 
-            booksContainer.innerHTML = filteredBooks.map(book => `
+            booksContainer.innerHTML = sortedBooks.map(book => `
               <a href="/book/${book.id}/" class="book-card-link">
-                  <div class="book-card">
+                  <div class="book-card ${book.is_available ? 'available' : 'unavailable'}">
                       <h3 class="book-title">${book.title}</h3>
                       <p class="book-author">${book.author}</p>
                       <p class="book-description">${book.description_short}</p>
-                      <span class="book-genre">${getGenreDisplay(book.genre)}</span>
+                      <div class="book-footer">
+                          <span class="book-genre">${getGenreDisplay(book.genre)}</span>
+                      </div>
                   </div>
               </a>
             `).join('');
