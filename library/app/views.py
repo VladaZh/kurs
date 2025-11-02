@@ -107,6 +107,11 @@ def sign_in_view(request):
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
+    has_active_reservation_from_others = BookReservation.objects.filter(
+        book=book,
+        status__in=['reserved', 'pending']
+    ).exclude(user=request.user).exists() if request.user.is_authenticated else False
+    
     user_reservation = None
     if request.user.is_authenticated:
         user_reservation = BookReservation.objects.filter(
@@ -114,8 +119,15 @@ def book_detail(request, book_id):
             user=request.user
         ).first()
     
+    if not request.user.is_authenticated:
+        has_active_reservation_from_others = BookReservation.objects.filter(
+            book=book,
+            status__in=['reserved', 'pending']
+        ).exists()
+    
     context = {
         'book': book,
+        'has_active_reservation_from_others': has_active_reservation_from_others,
         'user_reservation': user_reservation
     }
     return render(request, 'app/book.html', context)
@@ -166,6 +178,14 @@ def remove_article_from_profile(request, article_id):
 @login_required
 def reserve_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
+    
+    has_active_reservation_from_others = BookReservation.objects.filter(
+        book=book,
+        status__in=['reserved', 'pending']  
+    ).exclude(user=request.user).exists()
+    
+    if has_active_reservation_from_others:
+        return redirect('book_detail', book_id=book_id)
     
     if book.quantity != 'В наличии':
         return redirect('book_detail', book_id=book_id)
