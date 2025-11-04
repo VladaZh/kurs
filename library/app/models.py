@@ -124,5 +124,41 @@ class BookReservation(models.Model):
             profile.books.remove(self.book)
     
     class Meta:
-        verbose_name = 'заявка на бронь'
-        verbose_name_plural = 'заявки на бронь'
+        verbose_name = 'заявка на бронь книги'
+        verbose_name_plural = 'заявки на бронь книг'
+
+class ArticleReservation(models.Model):
+    STATUS_CHOICES = [
+        ('reserved', 'Забронирована'),
+        ('pending', 'Ожидает подтверждения'),
+        ('rejected', 'Отклонена'),
+        ('completed', 'Завершена'),
+    ]
+    article = models.ForeignKey('Article', on_delete=models.CASCADE, verbose_name='Статья', editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', editable=False)
+    status = models.CharField(max_length=21, default="pending", verbose_name='Статус', choices=STATUS_CHOICES)
+
+    def __str__(self):
+        return f"Бронь {self.article.title} - {self.user.username}"
+    
+    def save(self, *args, **kwargs):
+        
+        if self.pk:
+            old_status = ArticleReservation.objects.get(pk=self.pk).status
+            if old_status != 'reserved' and self.status == 'reserved':
+                self.add_article_to_profile()
+        
+        super().save(*args, **kwargs)
+    
+    def add_article_to_profile(self):
+        profile, created = Profile.objects.get_or_create(user=self.user)
+        profile.articles.add(self.article)
+    
+    def remove_article_from_profile(self):
+        profile = getattr(self.user, 'profile', None)
+        if profile:
+            profile.articles.remove(self.book)
+    
+    class Meta:
+        verbose_name = 'заявка на бронь статьи'
+        verbose_name_plural = 'заявки на бронь статей'

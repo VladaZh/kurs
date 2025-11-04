@@ -122,6 +122,6 @@ STATICFILES_DIRS = [BASE_DIR / 'static']  # ← ДОБАВЬТЕ ЭТУ СТРО
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LOGIN_REDIRECT_URL = '/profile/reader/'
+LOGIN_URL = '/sign-in/'
+LOGIN_REDIRECT_URL = '/profile/'
 LOGOUT_REDIRECT_URL = '/sign-in/'

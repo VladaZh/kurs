@@ -52,6 +52,25 @@
                             <p class="no-items">У вас пока нет забронированных книг</p>
                         {% endif %}
                     </div>
+                    <div class="books-section">
+                        <h3>Мои статьи ({{ user_articles.count }})</h3>
+                        {% if user_articles %}
+                            <div class="books-grid">
+                                {% for article in user_articles %}
+                                <div class="book-card">
+                                    <h4 class="book-title">{{ article.title }}</h4>
+                                    <p class="book-author">{{ article.author }}</p>
+                                    <form method="post" action="{% url 'remove_article_from_profile' article.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="remove-btn">Вернуть статью</button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="no-items">У вас пока нет забронированных статей</p>
+                        {% endif %}
+                    </div>
                 </div>
                 
                 {% if user.is_staff %}

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Book, Profile, Article, BookReservation
+from django.urls import path
+from .models import Book, Profile, Article, BookReservation, ArticleReservation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
@@ -21,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
 class BookReservationInline(admin.TabularInline):
     model = BookReservation
     extra = 0
-    readonly_fields = ['user', 'status']  # Убрали created_at
+    readonly_fields = ['user', 'status'] 
     can_delete = False
     show_change_link = True
 
@@ -32,19 +33,27 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ['title', 'author']
     inlines = [BookReservationInline]
 
+class ArticleReservationInline(admin.TabularInline):
+    model = ArticleReservation
+    extra = 0
+    readonly_fields = ['user', 'status'] 
+    can_delete = False
+    show_change_link = True
+
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'quantity', 'genre']
     list_filter = ['quantity', 'genre']
     search_fields = ['title', 'author']
+    inlines = [ArticleReservationInline]
 
 @admin.register(BookReservation)
 class BookReservationAdmin(admin.ModelAdmin):
-    list_display = ['book', 'get_user', 'status', 'quick_actions']  # Убрали created_at
-    list_filter = ['status']  # Убрали created_at
+    list_display = ['book', 'get_user', 'status', 'quick_actions'] 
+    list_filter = ['status'] 
     list_editable = ['status']
     search_fields = ['book__title', 'user__username']
-    readonly_fields = ['book', 'user']  # Убрали created_at
+    readonly_fields = ['book', 'user'] 
     actions = ['approve_selected', 'reject_selected', 'complete_selected']
     
     def get_user(self, obj):
@@ -86,30 +95,24 @@ class BookReservationAdmin(admin.ModelAdmin):
     complete_selected.short_description = "Завершить выбранные брони"
     
     def _approve_reservation(self, reservation):
-        """Внутренний метод для одобрения брони"""
         reservation.status = 'reserved'
         reservation.save()
-        # Обновляем статус книги
         book = reservation.book
         book.quantity = 'Нет в наличии'
         book.save()
-        # Отклоняем другие заявки на эту книгу
         BookReservation.objects.filter(
             book=book,
             status='pending'
         ).exclude(id=reservation.id).update(status='rejected')
     
     def _complete_reservation(self, reservation):
-        """Внутренний метод для завершения брони"""
         reservation.status = 'completed'
         reservation.save()
-        # Возвращаем книгу в наличие
         book = reservation.book
         book.quantity = 'В наличии'
         book.save()
     
     def get_urls(self):
-        from django.urls import path
         urls = super().get_urls()
         custom_urls = [
             path(
@@ -126,7 +129,6 @@ class BookReservationAdmin(admin.ModelAdmin):
         return custom_urls + urls
     
     def approve_reservation(self, request, object_id):
-        """View для одобрения одной брони"""
         reservation = BookReservation.objects.get(id=object_id)
         if reservation.status == 'pending':
             self._approve_reservation(reservation)
@@ -134,7 +136,6 @@ class BookReservationAdmin(admin.ModelAdmin):
         return HttpResponseRedirect(reverse('admin:app_bookreservation_changelist'))
     
     def complete_reservation(self, request, object_id):
-        """View для завершения одной брони"""
         reservation = BookReservation.objects.get(id=object_id)
         if reservation.status == 'reserved':
             self._complete_reservation(reservation)
@@ -144,6 +145,103 @@ class BookReservationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('book', 'user')
 
-# Регистрация моделей
+@admin.register(ArticleReservation)
+class ArticleReservationAdmin(admin.ModelAdmin):
+    list_display = ['article', 'get_user', 'status', 'quick_actions'] 
+    list_filter = ['status'] 
+    list_editable = ['status']
+    search_fields = ['article__title', 'user__username']
+    readonly_fields = ['article', 'user'] 
+    actions = ['approve_selected', 'reject_selected', 'complete_selected']
+    
+    def get_user(self, obj):
+        return obj.user.username
+    get_user.short_description = 'Пользователь'
+    get_user.admin_order_field = 'user__username'
+    
+    def quick_actions(self, obj):
+        if obj.status == 'pending':
+            return format_html(
+                '<a class="button" href="{}">Одобрить</a> ',
+                reverse('admin:app_articlereservation_approve', args=[obj.id])
+            )
+        elif obj.status == 'reserved':
+            return format_html(
+                '<a class="button" href="{}" style="background-color: #28a745;">Завершить</a>',
+                reverse('admin:app_articlereservation_complete', args=[obj.id])
+            )
+        return '-'
+    quick_actions.short_description = 'Быстрые действия'
+    
+    def approve_selected(self, request, queryset):
+        for reservation in queryset:
+            if reservation.status == 'pending':
+                self._approve_reservation(reservation)
+        self.message_user(request, f"Одобрено {queryset.count()} броней")
+    approve_selected.short_description = "Одобрить выбранные брони"
+    
+    def reject_selected(self, request, queryset):
+        updated = queryset.update(status='rejected')
+        self.message_user(request, f"Отклонено {updated} броней")
+    reject_selected.short_description = "Отклонить выбранные брони"
+    
+    def complete_selected(self, request, queryset):
+        for reservation in queryset:
+            if reservation.status == 'reserved':
+                self._complete_reservation(reservation)
+        self.message_user(request, f"Завершено {queryset.count()} броней")
+    complete_selected.short_description = "Завершить выбранные брони"
+    
+    def _approve_reservation(self, reservation):
+        reservation.status = 'reserved'
+        reservation.save()
+        article = reservation.article
+        article.quantity = 'Нет в наличии'
+        article.save()
+        ArticleReservation.objects.filter(
+            article=article,
+            status='pending'
+        ).exclude(id=reservation.id).update(status='rejected')
+    
+    def _complete_reservation(self, reservation):
+        reservation.status = 'completed'
+        reservation.save()
+        article = reservation.article
+        article.quantity = 'В наличии'
+        article.save()
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<path:object_id>/approve/',
+                self.admin_site.admin_view(self.approve_reservation),
+                name='app_articlereservation_approve',
+            ),
+            path(
+                '<path:object_id>/complete/',
+                self.admin_site.admin_view(self.complete_reservation),
+                name='app_articlereservation_complete',
+            ),
+        ]
+        return custom_urls + urls
+    
+    def approve_reservation(self, request, object_id):
+        reservation = ArticleReservation.objects.get(id=object_id)
+        if reservation.status == 'pending':
+            self._approve_reservation(reservation)
+            self.message_user(request, f"Бронь статьи '{reservation.article.title}' одобрена")
+        return HttpResponseRedirect(reverse('admin:app_articlereservation_changelist'))
+    
+    def complete_reservation(self, request, object_id):
+        reservation = ArticleReservation.objects.get(id=object_id)
+        if reservation.status == 'reserved':
+            self._complete_reservation(reservation)
+            self.message_user(request, f"Бронь статьи '{reservation.article.title}' завершена")
+        return HttpResponseRedirect(reverse('admin:app_articlereservation_changelist'))
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('article', 'user')
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

@@ -14,6 +14,7 @@ urlpatterns = [
     path('sign-in/', views.sign_in_view, name='sign_in'),
     path('logout/', auth_views.LogoutView.as_view(next_page='sign_in'), name='logout'),
     path('book/<int:book_id>/reserve/', views.reserve_book, name='reserve_book'),
+    path('article/<int:article_id>/reserve/', views.reserve_article, name='reserve_article'),
     path('book/<int:book_id>/remove/', views.remove_book_from_profile, name='remove_book_from_profile'),
     path('article/<int:article_id>/remove/', views.remove_article_from_profile, name='remove_article_from_profile'),
     

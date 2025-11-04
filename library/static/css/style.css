@@ -364,7 +364,7 @@ header {
 }
 
 .profile-container {
-    max-width: 500px;
+    max-width: 800px;
     margin: 40px auto;
     padding: 40px;
     background: white;
@@ -533,18 +533,6 @@ header {
     margin-top: 25px;
     padding-top: 20px;
     border-top: 1px solid #e8e8e8;
-}
-
-.admin-link a {
-    color: #164d2e;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.admin-link a:hover {
-    color: #d4af37;
-    text-decoration: underline;
 }
 
 .error-message {
@@ -801,23 +789,40 @@ header {
     border: 2px dashed #e8e8e8;
 }
 
+/* ЕДИНОЕ ПРАВИЛО ДЛЯ КНОПКИ АДМИНИСТРАТОРА */
 .admin-btn {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 14px 28px;
     background: linear-gradient(135deg, #164d2e 0%, #0f3a22 100%);
     color: white;
     text-decoration: none;
-    border-radius: 8px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
     font-weight: 600;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    text-align: center;
+    cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(22, 77, 46, 0.25);
     margin: 10px 0;
+    line-height: 1.2;
 }
 
 .admin-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(22, 77, 46, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(22, 77, 46, 0.4);
+    background: linear-gradient(135deg, #1a5c38 0%, #164d2e 100%);
     color: white;
     text-decoration: none;
+}
+
+/* Специфичные правила для кнопки администратора в разных контекстах */
+.admin-link .admin-btn,
+.profile-container .admin-btn,
+.profile-section .admin-btn {
+    color: white !important;
+    text-decoration: none !important;
 }
 
 .profile-stats {
@@ -894,10 +899,6 @@ header {
 .book-card.unavailable {
     border-left: 4px solid #dc3545;
     opacity: 0.8;
-}
-
-.profile-container {
-    max-width: 800px;
 }
 
 .profile-info {
@@ -1054,6 +1055,11 @@ header {
     .book-card, .article-card {
         padding: 15px;
     }
+
+    .admin-btn {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1158,6 +1164,11 @@ header {
     .stat-number {
         font-size: 1.5rem;
     }
+
+    .admin-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 360px) {
@@ -1189,5 +1200,10 @@ header {
     .genre-btn {
         padding: 6px 12px;
         font-size: 12px;
+    }
+
+    .admin-btn {
+        padding: 8px 16px;
+        font-size: 13px;
     }
 }

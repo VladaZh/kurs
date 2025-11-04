@@ -26,6 +26,25 @@
       </a>
     </header>
 
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Поиск статей по названию или автору..." 
+                    class="search-input"
+                >
+                <button type="button" id="search-btn" class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
     <section class="genre-selector">
         <div class="container">
             <h2 class="section-title">Выберите категорию</h2>
@@ -39,84 +58,115 @@
         </div>
     </section>
 
-    <main class="content-section">
-        <div class="container">
-            <div class="books-grid" id="books-container">
-                <div class="welcome-message">
-                    <h3>Архив научных статей</h3>
-                    <p>Выберите категорию чтобы увидеть архивные материалы</p>
-                </div>
-            </div>
-        </div>
+  <main class="content-section">
+      <div class="container">
+          <div class="books-grid" id="books-container">
+              <div class="welcome-message">
+                  <h3>Добро пожаловать в наш архив</h3>
+                  <p>Выберите категорию чтобы увидеть доступные архивные материалы</p>
+              </div>
+          </div>
+      </div>
     </main>
 
     <footer class="footer">
       <p class="footer-copyright">&copy; 2025 Библиотека и архив. Все права защищены.</p>
     </footer>
+    
     <script>
         const articlesData = [
             {% for article in articles %}
             {
-              id: {{ article.id }},
-              title: "{{ article.title|escapejs }}",
-              author: "{{ article.author|escapejs }}",
-              description_short: "{{ article.description_short|escapejs }}",
-              genre: "{{ article.genre }}"
+                id: {{ article.id }},
+                title: "{{ article.title|escapejs }}",
+                author: "{{ article.author|escapejs }}",
+                description_short: "{{ article.description_short|escapejs }}",
+                genre: "{{ article.genre }}",
+                quantity: "{{ article.quantity|escapejs }}",
+                is_available: {% if article.quantity == 'В наличии' %}true{% else %}false{% endif %}
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         ];
 
-        function setupArticleCardClicks() {
-          document.addEventListener('click', function(event) {
-              const articleCard = event.target.closest('.books-card');
-              if (articleCard) {
-                  const articleId = articleCard.getAttribute('article-article-id');
-                  if (articleId) {
-                      window.location.href = `/article/${articleId}/`;
-                  }
-              }
-            });
+        let currentGenre = 'all';
+        let currentSearch = '';
+        let searchTimeout;
+
+        function filterArticles(genre = 'all', search = '') {
+            let filteredArticles = articlesData;
+            
+            if (genre !== 'all') {
+                filteredArticles = filteredArticles.filter(article => {
+                    const articleGenreDisplay = getGenreDisplay(article.genre);
+                    return articleGenreDisplay === genre;
+                });
+            }
+
+            if (search.trim() !== '') {
+                const searchTerm = search.toLowerCase().trim();
+                filteredArticles = filteredArticles.filter(article => {
+                    return article.title.toLowerCase().includes(searchTerm) || 
+                           article.author.toLowerCase().includes(searchTerm);
+                });
+            }
+
+            return filteredArticles;
         }
 
-        function displayArticles(genre = 'all') {
+        function displayArticles(genre = 'all', search = '') {
             const articlesContainer = document.getElementById('books-container');
             
-            const filteredArticles = genre === 'all' 
-                ? articlesData 
-                : articlesData.filter(article => {
-                    const matches = article.genre === genre;
-                    return matches;
-                });
+            const filteredArticles = filterArticles(genre, search);
 
-            if (filteredArticles.length === 0) {
-                articlesContainer.innerHTML = `
-                    <div class="welcome-message">
-                        <h3>Статьи не найдены</h3>
-                        <p>Попробуйте выбрать другой жанр</p>
-                        <p style="color: #888; margin-top: 10px;">Запрошенный жанр: ${genre}</p>
-                    </div>
-                `;
+            const sortedArticles = filteredArticles.sort((a, b) => {
+                if (a.is_available && !b.is_available) return -1;
+                if (!a.is_available && b.is_available) return 1;
+                return 0;
+            });
+
+            if (sortedArticles.length === 0) {
+                let message = '';
+                if (search !== '') {
+                    message = `
+                        <div class="welcome-message">
+                            <h3>Статьи не найдены</h3>
+                            <p>По запросу "${search}" ничего не найдено</p>
+                            <p>Попробуйте изменить поисковый запрос или выбрать другую категорию</p>
+                        </div>
+                    `;
+                } else {
+                    message = `
+                        <div class="welcome-message">
+                            <h3>Статьи не найдены</h3>
+                            <p>Попробуйте выбрать другую категорию</p>
+                            <p style="color: #888; margin-top: 10px;">Запрошенная категория: ${getGenreDisplay(genre)}</p>
+                        </div>
+                    `;
+                }
+                articlesContainer.innerHTML = message;
                 return;
             }
 
-            articlesContainer.innerHTML = filteredArticles.map(article => `
-              <a href="/article/${article.id}/" class="book-card-link">
-                  <div class="book-card">
-                      <h3 class="book-title">${article.title}</h3>
-                      <p class="book-author">${article.author}</p>
-                      <p class="book-description">${article.description_short}</p>
-                      <span class="book-genre">${getGenreDisplay(article.genre)}</span>
-                  </div>
-              </a>
+            articlesContainer.innerHTML = sortedArticles.map(article => `
+                <a href="/article/${article.id}/" class="book-card-link">
+                    <div class="book-card ${article.is_available ? 'available' : 'unavailable'}">
+                        <h3 class="book-title">${article.title}</h3>
+                        <p class="book-author">${article.author}</p>
+                        <p class="book-description">${article.description_short}</p>
+                        <div class="book-footer">
+                            <span class="book-genre">${getGenreDisplay(article.genre)}</span>
+                        </div>
+                    </div>
+                </a>
             `).join('');
         }
 
         function getGenreDisplay(genre) {
             const genres = {
-              'Технические': 'Технические',
-              'Медицинские': 'Медицинские',
-              'Химические': 'Химические',
-              'Гуманитарные': 'Гуманитарные'
+                'Технические': 'Технические',
+                'Медицинские': 'Медицинские',
+                'Химические': 'Химические',
+                'Гуманитарные': 'Гуманитарные',
             };
             return genres[genre] || genre;
         }
@@ -130,17 +180,52 @@
                     genreButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     
-                    const genre = this.getAttribute('data-genre');
-                    displayArticles(genre);
+                    currentGenre = this.getAttribute('data-genre');
+                    displayArticles(currentGenre, currentSearch);
                 });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+
+            function performSearch() {
+                currentSearch = searchInput.value;
+                displayArticles(currentGenre, currentSearch);
+            }
+
+            function debouncedSearch() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                
+                if (value === '') {
+                    currentSearch = '';
+                    displayArticles(currentGenre, '');
+                } else {
+                    debouncedSearch();
+                }
             });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             setupGenreButtons();
+            setupSearch();
             
             if (articlesData.length > 0) {
-                displayArticles('all');
+                displayArticles('all', '');
             } else {
                 console.log('Нет статей для отображения');
             }

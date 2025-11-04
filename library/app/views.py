@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import SignUpForm, SignInForm
-from .models import Book, Article, Profile, BookReservation
+from .models import Book, Article, Profile, BookReservation, ArticleReservation
 from django.contrib import messages
 
 def library(request):
@@ -134,8 +134,29 @@ def book_detail(request, book_id):
 
 def article_detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
+    
+    has_confirmed_reservation_from_others = ArticleReservation.objects.filter(
+        article=article,
+        status='reserved'
+    ).exclude(user=request.user).exists() if request.user.is_authenticated else False
+    
+    user_reservation = None
+    if request.user.is_authenticated:
+        user_reservation = ArticleReservation.objects.filter(
+            article=article, 
+            user=request.user
+        ).first()
+    
+    if not request.user.is_authenticated:
+        has_confirmed_reservation_from_others = ArticleReservation.objects.filter(
+            article=article,
+            status='reserved'
+        ).exists()
+    
     context = {
-        'article': article
+        'article': article,
+        'has_confirmed_reservation_from_others': has_confirmed_reservation_from_others,
+        'user_reservation': user_reservation
     }
     return render(request, 'app/article.html', context)
 
@@ -208,6 +229,39 @@ def reserve_book(request, book_id):
     return redirect('book_detail', book_id=book_id)
 
 @login_required
+def reserve_article(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    
+    has_confirmed_reservation_from_others = ArticleReservation.objects.filter(
+        article=article,
+        status='reserved'  
+    ).exclude(user=request.user).exists()
+    
+    if has_confirmed_reservation_from_others:
+        return redirect('article_detail', article_id=article_id)
+    
+    if article.quantity != 'В наличии':
+        return redirect('article_detail', article_id=article_id)
+    
+    existing_user_reservation = ArticleReservation.objects.filter(
+        article=article, 
+        user=request.user,
+        status__in=['pending', 'reserved']  
+    ).first()
+    
+    if existing_user_reservation:
+        pass
+    else:
+        ArticleReservation.objects.create(
+            article=article,
+            user=request.user,
+            status='pending'
+        )
+    
+    return redirect('article_detail', article_id=article_id)
+
+
+@login_required
 def approve_reservation(request, reservation_id):
     if not request.user.is_staff:
         return redirect('library')
@@ -243,3 +297,40 @@ def complete_reservation(request, reservation_id):
     book.save()
     
     return redirect('admin:app_bookreservation_changelist')
+
+@login_required
+def approve_reservation_article(request, reservation_id):
+    if not request.user.is_staff:
+        return redirect('archive')
+    
+    reservation = get_object_or_404(ArticleReservation, id=reservation_id)
+    
+    reservation.status = 'reserved'
+    reservation.save()  
+    
+    article = reservation.article
+    article.quantity = 'Нет в наличии'
+    article.save()
+    
+    ArticleReservation.objects.filter(
+        article=article
+    ).exclude(id=reservation_id).update(status='rejected')
+    
+    return redirect('admin:app_articlereservation_changelist')
+
+@login_required
+def complete_reservation_article(request, reservation_id):
+    if not request.user.is_staff:
+        return redirect('archive')
+    
+    reservation = get_object_or_404(ArticleReservation, id=reservation_id)
+    reservation.remove_article_from_profile()
+    
+    reservation.status = 'completed'
+    reservation.save()
+    
+    article = reservation.article
+    article.quantity = 'В наличии'
+    article.save()
+    
+    return redirect('admin:app_articlereservation_changelist')
