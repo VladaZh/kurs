@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +45,7 @@ ROOT_URLCONF = "library.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],  # ← ИСПРАВЬТЕ ЭТУ СТРОКУ!
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -120,3 +121,17 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = '/sign-in/'
 LOGIN_REDIRECT_URL = '/profile/'
 LOGOUT_REDIRECT_URL = '/sign-in/'
+
+AWS_ACCESS_KEY_ID = 'user-ZHsFmRvZdbDD'
+AWS_SECRET_ACCESS_KEY = 'VDfnF315d3637bmZhnZ5KhR8K9VSvC5S'
+
+AWS_STORAGE_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', 'library')
+AWS_S3_ENDPOINT_URL = 'https://s3.buckets.ru'
+AWS_S3_REGION_NAME = 'ru-1'
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600

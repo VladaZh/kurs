@@ -32,6 +32,13 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ['quantity', 'genre']
     search_fields = ['title', 'author']
     inlines = [BookReservationInline]
+    
+    # ДОБАВЛЕНО: Поля для формы редактирования с pdf_file
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'author', 'description_short', 'description_long', 'year', 'genre', 'pdf_file', 'quantity')
+        }),
+    )
 
 class ArticleReservationInline(admin.TabularInline):
     model = ArticleReservation
@@ -101,8 +108,7 @@ class BookReservationAdmin(admin.ModelAdmin):
         book.quantity = 'Нет в наличии'
         book.save()
         BookReservation.objects.filter(
-            book=book,
-            status='pending'
+            book=book
         ).exclude(id=reservation.id).update(status='rejected')
     
     def _complete_reservation(self, reservation):
@@ -199,8 +205,7 @@ class ArticleReservationAdmin(admin.ModelAdmin):
         article.quantity = 'Нет в наличии'
         article.save()
         ArticleReservation.objects.filter(
-            article=article,
-            status='pending'
+            article=article
         ).exclude(id=reservation.id).update(status='rejected')
     
     def _complete_reservation(self, reservation):

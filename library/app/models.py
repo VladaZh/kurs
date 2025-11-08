@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import models
+from storages.backends.s3boto3 import S3Boto3Storage
 
 class Book(models.Model):
     id = models.AutoField(primary_key=True)
@@ -10,6 +11,13 @@ class Book(models.Model):
     description_short = models.TextField(verbose_name='Краткое описание')
     description_long = models.TextField(verbose_name='Подробное описание')
     year = models.IntegerField(verbose_name='Год издания')
+    pdf_file = models.FileField(
+        upload_to='books/',
+        verbose_name='PDF файл',
+        blank=True,
+        null=True,
+        storage=S3Boto3Storage(),
+    )
     quantity = models.CharField(
         max_length=13,
         verbose_name="В наличии",
@@ -28,6 +36,16 @@ class Book(models.Model):
             ('Образовательные', 'Образовательные'),
         ]
     )
+
+    def get_correct_pdf_url(self):
+        if self.pdf_file:
+            old_url = self.pdf_file.url
+            correct_url = old_url.replace(
+                'https://s3.buckets.ru/library/', 
+                'https://fb57c80b9e3bd4a806cf8708ddaf711b.bckt.ru/'
+            )
+            return correct_url
+        return None
 
     def __str__(self):
         return self.title
@@ -157,7 +175,7 @@ class ArticleReservation(models.Model):
     def remove_article_from_profile(self):
         profile = getattr(self.user, 'profile', None)
         if profile:
-            profile.articles.remove(self.book)
+            profile.articles.remove(self.article)
     
     class Meta:
         verbose_name = 'заявка на бронь статьи'

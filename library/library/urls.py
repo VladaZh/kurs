@@ -20,4 +20,5 @@ urlpatterns = [
     
     path('book/<int:book_id>/add/', views.add_book_to_profile, name='add_book_to_profile'),
     path('article/<int:article_id>/add/', views.add_article_to_profile, name='add_article_to_profile'),
+    path('book/<int:book_id>/read-pdf/', views.read_book_pdf, name='read_book_pdf'),
 ]

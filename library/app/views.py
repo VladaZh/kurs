@@ -1,11 +1,14 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import SignUpForm, SignInForm
 from .models import Book, Article, Profile, BookReservation, ArticleReservation
-from django.contrib import messages
+from django.http import JsonResponse, FileResponse
+import boto3
+from django.conf import settings
+from io import BytesIO
 
 def library(request):
     books = Book.objects.all()
@@ -338,3 +341,47 @@ def complete_reservation_article(request, reservation_id):
 def custom_logout(request):
     logout(request)
     return redirect('sign_in')
+
+
+def download_book(request, book_id):
+    try:
+        book = Book.objects.get(id=book_id)
+        response = FileResponse(book.pdf_file.open(), filename=book.title + '.pdf')
+        return response
+    except Book.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404)
+    
+# views.py
+from django.http import HttpResponse, Http404
+import requests
+from io import BytesIO
+
+@login_required
+def read_book_pdf(request, book_id):
+    """Надежный view для чтения PDF"""
+    book = get_object_or_404(Book, id=book_id)
+    
+    user_reservation = BookReservation.objects.filter(
+        book=book, 
+        user=request.user, 
+        status='reserved'
+    ).first()
+    
+    if not user_reservation or not book.pdf_file:
+        raise Http404("Доступ запрещен или файл не найден")
+
+    try:
+        correct_url = f"https://fb57c80b9e3bd4a806cf8708ddaf711b.bckt.ru/{book.pdf_file.name}"
+        
+        response = requests.get(correct_url, timeout=30)
+        response.raise_for_status()
+        
+        file_response = HttpResponse(
+            response.content,
+            content_type='application/pdf'
+        )
+        file_response['Content-Disposition'] = f'inline; filename="{book.title}.pdf"'
+        return file_response
+        
+    except requests.RequestException as e:
+        raise Http404(f"Не удалось загрузить файл: {str(e)}")
