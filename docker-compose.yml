@@ -44,8 +44,8 @@ services:
     image: redis:latest
     container_name: redis
     restart: always
-    # volumes:
-    #   - redis_data:/data
+    volumes:
+      - redis_data:/data
     networks:
       - library-network
 
