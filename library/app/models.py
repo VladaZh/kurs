@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
@@ -198,6 +199,7 @@ class BookReservation(models.Model):
     book = models.ForeignKey('Book', on_delete=models.CASCADE, verbose_name='Книга', editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', editable=False)
     status = models.CharField(max_length=21, default="pending", verbose_name='Статус', choices=STATUS_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def __str__(self):
         return f"Бронь {self.book.title} - {self.user.username}"
@@ -234,6 +236,7 @@ class ArticleReservation(models.Model):
     article = models.ForeignKey('Article', on_delete=models.CASCADE, verbose_name='Статья', editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', editable=False)
     status = models.CharField(max_length=21, default="pending", verbose_name='Статус', choices=STATUS_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def __str__(self):
         return f"Бронь {self.article.title} - {self.user.username}"
@@ -255,7 +258,7 @@ class ArticleReservation(models.Model):
         profile = getattr(self.user, 'profile', None)
         if profile:
             profile.articles.remove(self.article)
-    
+
     class Meta:
         verbose_name = 'заявка на бронь статьи'
         verbose_name_plural = 'заявки на бронь статей'

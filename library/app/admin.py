@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
+from app.tasks import send_approval_notification, schedule_return_reminder
 
 class ProfileInline(admin.StackedInline):
     model = Profile
@@ -115,6 +116,22 @@ class BookReservationAdmin(admin.ModelAdmin):
         BookReservation.objects.filter(
             book=book
         ).exclude(id=reservation.id).update(status='rejected')
+        try:
+            send_approval_notification.delay(
+                book_title=book.title,
+                user_email=reservation.user.email,
+                first_name=reservation.user.first_name,
+                last_name=reservation.user.last_name
+            )
+            
+            schedule_return_reminder.delay(
+                book_title=book.title,
+                user_email=reservation.user.email,
+                first_name=reservation.user.first_name,
+                last_name=reservation.user.last_name
+            )
+        except Exception as e:
+            print(f"Ошибка при отправке уведомления: {e}")
     
     def _complete_reservation(self, reservation):
         reservation.status = 'completed'
@@ -212,6 +229,22 @@ class ArticleReservationAdmin(admin.ModelAdmin):
         ArticleReservation.objects.filter(
             article=article
         ).exclude(id=reservation.id).update(status='rejected')
+        try:
+            send_approval_notification.delay(
+                book_title=article.title,
+                user_email=reservation.user.email,
+                first_name=reservation.user.first_name,
+                last_name=reservation.user.last_name
+            )
+            
+            schedule_return_reminder.delay(
+                book_title=article.title,
+                user_email=reservation.user.email,
+                first_name=reservation.user.first_name,
+                last_name=reservation.user.last_name
+            )
+        except Exception as e:
+            print(f"Ошибка при отправке уведомления: {e}")
     
     def _complete_reservation(self, reservation):
         reservation.status = 'completed'
