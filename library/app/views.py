@@ -9,6 +9,7 @@ from django.http import JsonResponse, FileResponse
 import boto3
 from django.conf import settings
 from io import BytesIO
+import requests
 
 def library(request):
     books = Book.objects.all()
@@ -350,15 +351,9 @@ def download_book(request, book_id):
         return response
     except Book.DoesNotExist:
         return JsonResponse({'error': 'Book not found'}, status=404)
-    
-# views.py
-from django.http import HttpResponse, Http404
-import requests
-from io import BytesIO
 
 @login_required
 def read_book_pdf(request, book_id):
-    """Надежный view для чтения PDF"""
     book = get_object_or_404(Book, id=book_id)
     
     user_reservation = BookReservation.objects.filter(

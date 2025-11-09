@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.db import models
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -37,6 +37,22 @@ class Book(models.Model):
         ]
     )
 
+    def delete(self, *args, **kwargs):
+        """Удаляет файл из S3 перед удалением объекта"""
+        if self.pdf_file:
+            storage = self.pdf_file.storage
+            file_name = self.pdf_file.name
+            
+            super().delete(*args, **kwargs)
+            
+            try:
+                if storage.exists(file_name):
+                    storage.delete(file_name)
+            except Exception as e:
+                print(f"Ошибка при удалении файла из S3: {e}")
+        else:
+            super().delete(*args, **kwargs)
+
     def get_correct_pdf_url(self):
         if self.pdf_file:
             old_url = self.pdf_file.url
@@ -53,6 +69,20 @@ class Book(models.Model):
     class Meta:
         verbose_name = "книга"
         verbose_name_plural = "книги"
+
+@receiver(post_delete, sender=Book)
+def delete_book_file(sender, instance, **kwargs):
+    """Удаляет файл из хранилища после удаления объекта Book"""
+    if instance.pdf_file:
+        try:
+            storage = instance.pdf_file.storage
+            file_name = instance.pdf_file.name
+            
+            if storage.exists(file_name):
+                storage.delete(file_name)
+                print(f"Файл {file_name} удален из S3")
+        except Exception as e:
+            print(f"Ошибка при удалении файла из S3: {e}")
 
 class Article(models.Model):
     id = models.AutoField(primary_key=True)
