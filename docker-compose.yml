@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:17.0
+    container_name: db
     environment:
       POSTGRES_DB: library_db
       POSTGRES_USER: librarian
@@ -12,7 +13,7 @@ services:
 
   nginx:
     image: nginx:1.29.3
-    container_name: nginx-proxy
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
@@ -31,13 +32,26 @@ services:
     environment:
       - PORT=8000
       - DATABASE_URL=postgresql://librarian:17283940@db:5432/library_db
+    depends_on:
+      - db
+      - redis
     networks:
       - library-network
     volumes:
       - ./app/staticfiles:/app/staticfiles
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    # volumes:
+    #   - redis_data:/data
+    networks:
+      - library-network
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   library-network:
