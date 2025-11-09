@@ -39,11 +39,15 @@
                             <div class="books-grid">
                                 {% for book in user_books %}
                                 <div class="book-card">
-                                    <h4 class="book-title">{{ book.title }}</h4>
-                                    <p class="book-author">{{ book.author }}</p>
+                                    <a class="book-card-link" href="{% url 'book_detail' book.id %}">
+                                        <div>
+                                            <h4 class="book-title">{{ book.title }}</h4>
+                                            <p class="book-author">{{ book.author }}</p>
+                                        </div>
+                                    </a>
                                     <form method="post" action="{% url 'remove_book_from_profile' book.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="remove-btn">Вернуть книгу</button>
+                                    {% csrf_token %}
+                                    <button type="submit" class="remove-btn">Вернуть книгу</button>
                                     </form>
                                 </div>
                                 {% endfor %}
@@ -58,8 +62,12 @@
                             <div class="books-grid">
                                 {% for article in user_articles %}
                                 <div class="book-card">
-                                    <h4 class="book-title">{{ article.title }}</h4>
-                                    <p class="book-author">{{ article.author }}</p>
+                                    <a class="book-card-link" href="{% url 'article_detail' article.id %}">
+                                        <div>
+                                            <h4 class="book-title">{{ article.title }}</h4>
+                                            <p class="book-author">{{ article.author }}</p>
+                                        </div>
+                                    </a>
                                     <form method="post" action="{% url 'remove_article_from_profile' article.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="remove-btn">Вернуть статью</button>
