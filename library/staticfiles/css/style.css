@@ -789,7 +789,6 @@ header {
     border: 2px dashed #e8e8e8;
 }
 
-/* ЕДИНОЕ ПРАВИЛО ДЛЯ КНОПКИ АДМИНИСТРАТОРА */
 .admin-btn {
     display: inline-block;
     padding: 14px 28px;
@@ -919,6 +918,14 @@ header {
 
 .articles-section:last-child {
     margin-bottom: 0;
+}
+
+.reserved {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    background-color: yellow;
 }
 
 @media (max-width: 768px) {
