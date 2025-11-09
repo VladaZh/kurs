@@ -380,3 +380,35 @@ def read_book_pdf(request, book_id):
         
     except requests.RequestException as e:
         raise Http404(f"Не удалось загрузить файл: {str(e)}")
+    
+@login_required
+def read_article_pdf(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    
+    user_reservation = ArticleReservation.objects.filter(
+        article=article, 
+        user=request.user, 
+        status='reserved'
+    ).first()
+    
+    if not user_reservation or not article.pdf_file:
+        raise Http404("Доступ запрещен или файл не найден")
+
+    try:
+        file_name = article.pdf_file.name
+        if not file_name.startswith('articles/'):
+            file_name = f'articles/{file_name}'
+        correct_url = f"https://fb57c80b9e3bd4a806cf8708ddaf711b.bckt.ru/{file_name}"
+        
+        response = requests.get(correct_url, timeout=30)
+        response.raise_for_status()
+        
+        file_response = HttpResponse(
+            response.content,
+            content_type='application/pdf'
+        )
+        file_response['Content-Disposition'] = f'inline; filename="{article.title}.pdf"'
+        return file_response
+        
+    except requests.RequestException as e:
+        raise Http404(f"Не удалось загрузить файл: {str(e)}")

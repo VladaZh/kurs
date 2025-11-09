@@ -33,7 +33,6 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ['title', 'author']
     inlines = [BookReservationInline]
     
-    # ДОБАВЛЕНО: Поля для формы редактирования с pdf_file
     fieldsets = (
         (None, {
             'fields': ('title', 'author', 'description_short', 'description_long', 'year', 'genre', 'pdf_file', 'quantity')
@@ -53,6 +52,12 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ['quantity', 'genre']
     search_fields = ['title', 'author']
     inlines = [ArticleReservationInline]
+
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'author', 'description_short', 'description_long', 'year', 'genre', 'pdf_file', 'quantity')
+        }),
+    )
 
 @admin.register(BookReservation)
 class BookReservationAdmin(admin.ModelAdmin):

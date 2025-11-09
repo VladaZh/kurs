@@ -71,7 +71,14 @@
                         {% if user_reservation.status == 'pending' %}
                             <div class="pending-text">Ожидает подтверждения</div>
                         {% elif user_reservation.status == 'reserved' %}
-                            <div class="reserved-text">Забронировано вами</div>
+                            <div class="reserved">
+                                <div class="reserved-text">Забронировано вами</div>
+                                <div class="pdf-download-section">
+                                    <a href="{% url 'read_article_pdf' article.id %}" target="_blank" class="pdf-download-btn">
+                                        Читать PDF
+                                    </a>
+                                </div>
+                            </div>
                         {% endif %}
                     {% endif %}
                 </div>
