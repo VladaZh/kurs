@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.0
+    environment:
+      POSTGRES_DB: library_db
+      POSTGRES_USER: librarian
+      POSTGRES_PASSWORD: 17283940
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  redis:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  web:
+    image: vladazh/library-app:latest
+    command: python /app/manage.py runserver 0.0.0.0:8000
+    working_dir: /app
+    ports:
+    - "8000:8000"
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgresql://librarian:17283940@db:5432/library_db
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - static_volume:/app/staticfiles
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  celery_worker:
+    image: vladazh/library-app:latest
+    command: celery -A library worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://librarian:17283940@db:5432/library_db
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_URL=redis://redis:6379/1
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+volumes:
+  postgres_data:
+    external: true
+    name: kurs_postgres_data
+  redis_data:
+    external: true  
+    name: kurs_redis_data
+  static_volume:
+    external: true
+    name: kurs_static_volume
