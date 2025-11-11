@@ -366,7 +366,10 @@ def read_book_pdf(request, book_id):
         raise Http404("Доступ запрещен или файл не найден")
 
     try:
-        correct_url = f"https://fb57c80b9e3bd4a806cf8708ddaf711b.bckt.ru/{book.pdf_file.name}"
+        file_name = book.pdf_file.name
+        if not file_name.startswith('books/'):
+            file_name = f'books/{file_name}'
+        correct_url = f"https://fb57c80b9e3bd4a806cf8708ddaf711b.bckt.ru/{file_name}"
         
         response = requests.get(correct_url, timeout=30)
         response.raise_for_status()
