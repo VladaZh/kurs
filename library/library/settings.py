@@ -97,13 +97,14 @@ WSGI_APPLICATION = "library.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
+    
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'library_db',
-        'USER': 'librarian',
-        'PASSWORD': '17283940',
-        'HOST': 'db',
-        'PORT': '5432', 
+        'NAME': os.getenv('DB_NAME', 'library_db'),
+        'USER': os.getenv('DB_USER', 'librarian'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '17283940'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('DB_PORT', '5432'), 
     }
 }
 
