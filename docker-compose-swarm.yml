@@ -46,7 +46,7 @@ services:
       - library-network
 
   web:
-    image: vladazh/library-app:1.0.4
+    image: vladazh/library-app:1.0.6
     command: 
       sh -c "
       sleep 15 &&
@@ -68,7 +68,7 @@ services:
       - library-network
 
   celery_worker:
-    image: vladazh/library-app:1.0.4
+    image: vladazh/library-app:1.0.6
     command: celery -A library worker --loglevel=info
     environment:
       - DATABASE_URL=postgresql://librarian:17283940@db:5432/library_db
